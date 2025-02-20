@@ -20,8 +20,10 @@ app.use(cookieParser());
 // ROUTES
 
 import userRoutes from './routes/user.routes.js'
+import storyRoutes from './routes/travelStory.routes.js'
 
 app.use("api/v1/users",userRoutes)
+app.use("api/v1/travelStory",storyRoutes)
 
 app.use(errorHandler);
 export { app };
