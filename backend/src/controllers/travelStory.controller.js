@@ -139,4 +139,29 @@ const updateIsFavourite = asyncHandler(async (req, res, next) => {
     );
 });
 
-export { addStory, getAllStories, editStory, deleteStory, updateIsFavourite };
+const searchStory = asyncHandler(async (req, res, next) => {
+  const { query } = req.query;
+
+  if (!query) return next(new ApiError(404, "Query Required"));
+
+  const searchResult = await Story.find({
+    userId: req.user?._id,
+    $or: [
+      { 
+        title: { regex: query, $options: "i" } 
+      },
+      {
+        description: { regex: query, $options: "i" },
+      },
+      {
+        visitedLocation: { regex: query, $options: "i" },
+      },
+    ],
+  }).sort({isFavourite:-1});
+
+  if(!searchResult) return next(new ApiError(404,"Unable to find your intrest"))
+
+  return res.status(200).json(new ApiResponse(200,searchResult,"Serch Results fetched successfully..."))
+});
+
+export { addStory, getAllStories, editStory, deleteStory, updateIsFavourite,searchStory };

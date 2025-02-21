@@ -5,6 +5,7 @@ import {
   deleteStory,
   editStory,
   getAllStories,
+  searchStory,
   updateIsFavourite,
 } from "../controllers/travelStory.controller.js";
 import { upload } from "../middlewares/multer.middleware.js";
@@ -21,4 +22,5 @@ router
 router.route("/delete/:postId").delete(deleteStory);
 router.route("/updateIsFavourite/:postId").patch(updateIsFavourite);
 
+router.route("/search").get(searchStory)
 export default router;
