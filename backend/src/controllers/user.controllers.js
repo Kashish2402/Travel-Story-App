@@ -1,6 +1,8 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
+import { ApiResponse } from "../utils/ApiResponse.js";
 import { User } from "../models/user.models.js";
+import { uploadOnCloudinary } from "../utils/cloudinary.js";
 
 const generateAccessAndRefreshToken = async (userId) => {
   try {
@@ -9,26 +11,23 @@ const generateAccessAndRefreshToken = async (userId) => {
     const accessToken = await user.generateAccessToken();
     const refreshToken = await user.generateRefreshToken();
 
-    user.accessToken = accessToken;
     user.refreshToken = refreshToken;
 
-    user.save({ validateBeforeSave: false });
+    await user.save({ validateBeforeSave: false });
 
     return { accessToken, refreshToken };
   } catch (error) {
-    return next(
-      new ApiError(
-        400,
-        "Something went wrong while generate access token and refresh token..."
-      )
+    throw new ApiError(
+      500,
+      "Something went wrong while generate access token and refresh token..."
     );
   }
 };
 
 const signUp = asyncHandler(async (req, res, next) => {
-  const { fullName, email, age, password, gender } = req.body;
+  const { fullName, email, username, age, password, gender } = req.body;
 
-  if (!fullName && !email && !age && !password && !gender)
+  if (!fullName && !email && !username && !age && !password && !gender)
     return next(new ApiError(200, "FullName, email,age,password required!!!"));
 
   const existingUser = await User.findOne({ email });
@@ -45,9 +44,11 @@ const signUp = asyncHandler(async (req, res, next) => {
     email,
     password,
     gender,
+    age,
+    username,
   });
 
-  const createUser = await findById(user?._id).select(
+  const createUser = await User.findById(user?._id).select(
     "-password, -refreshToken"
   );
 
@@ -69,7 +70,7 @@ const login = asyncHandler(async (req, res, next) => {
   if (!username && !email && !password)
     return next(new ApiError(400, "Credentials Required for login!!"));
 
-  const user = await User.findOne({ username }, { email });
+  const user = await User.findOne({ $or: [{ username }, { email }] });
 
   if (!user) return next(new ApiError(404, "User Not Found!!"));
 
@@ -77,7 +78,7 @@ const login = asyncHandler(async (req, res, next) => {
 
   if (!validatePassword) return next(new ApiError(400, "Wrong Password!!"));
 
-  const loggedInUser = await findById(user?._id).select(
+  const loggedInUser = await User.findById(user?._id).select(
     "-password, -refreshToken"
   );
 
@@ -104,7 +105,7 @@ const login = asyncHandler(async (req, res, next) => {
 });
 
 const logout = asyncHandler(async (req, res, next) => {
-  await findByIdAndUpdate(
+  await User.findByIdAndUpdate(
     req.user?._id,
     {
       $unset: {
@@ -173,7 +174,7 @@ const updateAvatarImage = asyncHandler(async (req, res, next) => {
       )
     );
 
-  const user = await findByIdAndUpdate(
+  const user = await User.findByIdAndUpdate(
     req.user?._id,
     {
       $set: {
@@ -211,7 +212,7 @@ const updateCoverImage = asyncHandler(async (req, res, next) => {
       )
     );
 
-  const user = await findByIdAndUpdate(
+  const user = await User.findByIdAndUpdate(
     req.user?._id,
     {
       $set: {
@@ -242,7 +243,7 @@ const changePassword = asyncHandler(async (req, res, next) => {
       new ApiError(400, "New Password & Confirm New Password must be same!!!")
     );
 
-  const user = await findById(req.user?._id);
+  const user = await User.findById(req.user?._id);
 
   if (!user) return next(new ApiError(400, "User not found!!!"));
 
@@ -262,6 +263,8 @@ const changePassword = asyncHandler(async (req, res, next) => {
       new: true,
     }
   ).select("-passsword,-refreshToken");
+
+  res.status(200).json(new ApiResponse(200,updatedUser,"Password changed Successfully..."))
 });
 
 const refreshAccessToken = asyncHandler(async (req, res, next) => {
@@ -323,5 +326,5 @@ export {
   updateCoverImage,
   changePassword,
   refreshAccessToken,
-  getCurrentUser
+  getCurrentUser,
 };

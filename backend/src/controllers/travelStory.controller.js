@@ -2,15 +2,18 @@ import { Story } from "../models/travelStory.models.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
+import {uploadOnCloudinary} from "../utils/cloudinary.js"
 
 const addStory = asyncHandler(async (req, res, next) => {
-  const { title, description, visitedLocation, imageUrl, visitedDate } =
+  const { title, description, visitedLocations, visitedDate } =
     req.body;
 
-  if (!title || !description || !visitedLocation || !imageUrl || !visitedDate)
+    const imageUrl=req.file?.path
+
+  if (!title || !description || !visitedLocations || !imageUrl || !visitedDate)
     return next(new ApiError(400, "Fields Required"));
 
-  visitedDate = new Date(parseInt(visitedDate));
+  const newVisitedDate = new Date(parseInt(visitedDate));
 
   const image = await uploadOnCloudinary(imageUrl);
 
@@ -25,8 +28,8 @@ const addStory = asyncHandler(async (req, res, next) => {
   const travelStory = await Story.create({
     title,
     description,
-    visitedLocation,
-    visitedDate,
+    visitedLocations,
+    visitedDate:newVisitedDate,
     imageUrl: image.url,
     userId: req.user?._id,
   });
@@ -49,26 +52,26 @@ const getAllStories = asyncHandler(async (req, res, next) => {
   });
 
   if (!stories) return next(new ApiError(400, "Unable to fetch Stories!"));
-
+ console.log(stories)
   return res
     .status(200)
-    .json(200, stories, "All Stories fetched successfully...");
+    .json(new ApiResponse(200, stories, "All Stories fetched successfully..."));
 });
 
 const editStory = asyncHandler(async (req, res, next) => {
   const { postId } = req.params;
-  const { title, description, visitedLocation, imageUrl, visitedDate } =
+  const { title, description, visitedLocations, imageUrl, visitedDate } =
     req.body;
 
-  if (!title || !description || !visitedLocation || !imageUrl || !visitedDate)
-    return next(new ApiError(400, "Fields Required"));
+  let updateFields = {};
 
-  if (visitedDate) visitedDate = new Date(parseInt(visitedDate));
-
-  let image;
+  if (title) updateFields.title = title;
+  if (description) updateFields.description = description;
+  if (visitedLocations) updateFields.visitedLocations = visitedLocations;
+  if (visitedDate) updateFields.visitedDate = new Date(parseInt(visitedDate));
 
   if (imageUrl) {
-    image = await uploadOnCloudinary(imageUrl);
+    const image = await uploadOnCloudinary(imageUrl);
     if (!image)
       return next(
         new ApiError(
@@ -76,31 +79,17 @@ const editStory = asyncHandler(async (req, res, next) => {
           "Something went wrong... unable to upload image on server!!"
         )
       );
+    updateFields.imageUrl = image.url;
   }
 
-  const story = await Story.findByIdAndUpdate(
-    postId,
-    {
-      $set: {
-        title,
-        description,
-        visitedLocation,
-        visitedDate,
-        imageUrl: image?.url,
-      },
-    },
-    { new: true }
-  );
+  const story = await Story.findByIdAndUpdate(postId, { $set: updateFields }, { new: true });
 
   if (!story)
-    return next(
-      new ApiError(400, "Something went wrong... Unable to update story")
-    );
+    return next(new ApiError(400, "Something went wrong... Unable to update story"));
 
-  return res
-    .status(200)
-    .json(new ApiResponse(200, story, "Story Updated Successfully.."));
+  return res.status(200).json(new ApiResponse(200, story, "Story Updated Successfully.."));
 });
+
 
 const deleteStory = asyncHandler(async (req, res, next) => {
   const { postId } = req.params;
@@ -147,21 +136,61 @@ const searchStory = asyncHandler(async (req, res, next) => {
   const searchResult = await Story.find({
     userId: req.user?._id,
     $or: [
-      { 
-        title: { regex: query, $options: "i" } 
+      {
+        title: { $regex: query, $options: "i" },
       },
       {
-        description: { regex: query, $options: "i" },
+        description: { $regex: query, $options: "i" },
       },
       {
-        visitedLocation: { regex: query, $options: "i" },
+        visitedLocations: { $regex: query, $options: "i" },
       },
     ],
-  }).sort({isFavourite:-1});
+  }).sort({ isFavourite: -1 });
 
-  if(!searchResult) return next(new ApiError(404,"Unable to find your intrest"))
+  if (!searchResult)
+    return next(new ApiError(404, "Unable to find your intrest"));
 
-  return res.status(200).json(new ApiResponse(200,searchResult,"Serch Results fetched successfully..."))
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        searchResult,
+        "Serch Results fetched successfully..."
+      )
+    );
 });
 
-export { addStory, getAllStories, editStory, deleteStory, updateIsFavourite,searchStory };
+const filterStories = asyncHandler(async (req, res, next) => {
+  const { startDate, endDate } = req.query;
+
+  const start = new Date(parseInt(startDate));
+  const end = new Date(parseInt(endDate));
+
+  const filteredStories = await Story.find({
+    userId: req.user?._id,
+    visitedDate: { $gte: start, $lte: end },
+  }).sort({ isFavourite: -1 });
+
+  if (!filterStories)
+    return next(
+      new ApiError(400, "Something went wrong... Unable to filter Stories!!!")
+    );
+
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(200, filteredStories, "Fitered Stories Successfully...")
+    );
+});
+
+export {
+  addStory,
+  getAllStories,
+  editStory,
+  deleteStory,
+  updateIsFavourite,
+  searchStory,
+  filterStories
+};

@@ -4,6 +4,7 @@ import {
   addStory,
   deleteStory,
   editStory,
+  filterStories,
   getAllStories,
   searchStory,
   updateIsFavourite,
@@ -23,4 +24,6 @@ router.route("/delete/:postId").delete(deleteStory);
 router.route("/updateIsFavourite/:postId").patch(updateIsFavourite);
 
 router.route("/search").get(searchStory)
+router.route("/filter").get(filterStories)
+
 export default router;
