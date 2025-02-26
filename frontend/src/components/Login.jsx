@@ -1,17 +1,21 @@
 import React, { useState } from "react";
 import Password from "./Password";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { login } from "../features/authSlice";
 
 function Login() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
+  const { error } = useSelector((state) => state.auth);
   const [formData, setFormData] = useState({
     username: "",
     email: "",
     password: "",
   });
 
-  const [error, setError] = useState(null);
+  const [showError, setshowError] = useState(error);
 
   const validateEmail = (email) => {
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -23,18 +27,23 @@ function Login() {
     e.preventDefault();
     console.log("Login Data: ", formData);
     if (!validateEmail(formData.email)) {
-      setError("Please enter a valid Email address!!!");
+      setshowError("Please enter a valid Email address!!!");
       return;
     }
-   
 
+    if (!formData.password) {
+      setshowError("Please enter password!!!");
+      return;
+    }
+
+    dispatch(login(formData));
     setFormData({
       username: "",
       email: "",
       password: "",
     });
 
-    setError("")
+    setshowError("");
   };
 
   return (
@@ -79,7 +88,7 @@ function Login() {
             }
           />
 
-          {error && <p className="text-red-800 text-sm">{error}</p>}
+          {showError && <p className="text-red-800 text-sm">{showError}</p>}
 
           <button
             type="submit"

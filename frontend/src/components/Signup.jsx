@@ -1,9 +1,14 @@
 import React, { useState } from "react";
 import Password from "./Password";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { signUp } from "../features/authSlice";
 
 function Signup() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { error } = useSelector((state) => state.auth);
+  const [showError, setShowError] = useState(error);
   const [formData, setFormData] = useState({
     fullName: "",
     username: "",
@@ -22,6 +27,7 @@ function Signup() {
 
     console.log("Signup Data:", formData);
 
+    dispatch(signUp(formData));
     setFormData({
       fullName: "",
       username: "",
@@ -30,6 +36,7 @@ function Signup() {
       age: "",
       gender: "",
     });
+    
   };
 
   return (
@@ -126,6 +133,7 @@ function Signup() {
               </span>
             </div>
           </div>
+          {showError && <p className="text-red-700 text-xs">{showError}</p>}
           <button
             type="submit"
             className="bg-[#928dab] text-[#1f1c2c] w-3/4 py-2 rounded-2xl font-bold border-2 border-transparent cursor-pointer hover:border-[#928dab] hover:text-[#928dab] hover:bg-transparent transition-all duration-200 ease-in-out"
