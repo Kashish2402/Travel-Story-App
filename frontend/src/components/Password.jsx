@@ -16,7 +16,7 @@ function Password({ value, onChange }) {
         value={value}
         onChange={onChange}
         className="w-full bg-transparent border-none outline-none px-3 pb-1 text-white/50"
-        placeholder="john@example.com"
+        placeholder="*****"
       />
 
       <button

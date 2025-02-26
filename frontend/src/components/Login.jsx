@@ -11,21 +11,35 @@ function Login() {
     password: "",
   });
 
-  const handleLogin = (e) => {
-    e.preventDefault()
+  const [error, setError] = useState(null);
 
-    console.log('Login Data: ',formData)
+  const validateEmail = (email) => {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    return regex.test(email);
+  };
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+    console.log("Login Data: ", formData);
+    if (!validateEmail(formData.email)) {
+      setError("Please enter a valid Email address!!!");
+      return;
+    }
+   
 
     setFormData({
-        username: "",
-        email: "",
-        password: "",
-      })
+      username: "",
+      email: "",
+      password: "",
+    });
+
+    setError("")
   };
 
   return (
     <div className="w-full md:w-1/2 h-full flex flex-col items-center justify-center gap-10 bg-black/85 p-3">
-      <div className="text-[#928dab] text-3xl font-semibold">
+      <div className="text-[#928dab] text-3xl font-semibold text-center">
         Login to your journal
       </div>
       <div className="w-full">
@@ -64,6 +78,9 @@ function Login() {
               setFormData({ ...formData, password: e.target.value })
             }
           />
+
+          {error && <p className="text-red-800 text-sm">{error}</p>}
+
           <button
             type="submit"
             className="bg-[#928dab] text-[#1f1c2c] w-3/4 py-2 rounded-2xl font-bold border-2 border-transparent cursor-pointer hover:border-[#928dab] hover:text-[#928dab] hover:bg-transparent transition-all duration-200 ease-in-out"
