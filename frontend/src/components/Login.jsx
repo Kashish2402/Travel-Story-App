@@ -25,7 +25,7 @@ function Login() {
 
   const handleLogin = (e) => {
     e.preventDefault();
-    console.log("Login Data: ", formData);
+    // console.log("Login Data: ", formData);
     if (!validateEmail(formData.email)) {
       setshowError("Please enter a valid Email address!!!");
       return;

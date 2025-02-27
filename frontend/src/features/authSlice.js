@@ -17,7 +17,7 @@ export const getUser = createAsyncThunk(
 );
 
 export const signUp = createAsyncThunk(
-  "auth/sigUp",
+  "auth/signUp",
   async (userData, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.post("/users/signUp", userData);
@@ -37,9 +37,8 @@ export const login = createAsyncThunk(
   async (userData, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.post("/users/login", userData);
-
       toast.success(response.data.message);
-      return response.data.data;
+      return response.data.data.user;
     } catch (error) {
       console.log(error.response?.data?.message || "Unable to login User");
       return rejectWithValue(
@@ -53,7 +52,7 @@ export const logout = createAsyncThunk(
   "auth/logout",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.post("users/logout");
+      const response = await axiosInstance.post("/users/logout");
 
       toast.success(response.data.message);
       return response.data.data;
@@ -96,6 +95,7 @@ export const authSlice = createSlice({
       .addCase(signUp.fulfilled, (state, action) => {
         state.authUser = action.payload;
         state.isAuthenticated = true;
+        state.isSigningUp = false;
       })
       .addCase(signUp.rejected, (state, action) => {
         state.error = action.payload;
@@ -103,7 +103,7 @@ export const authSlice = createSlice({
       })
       .addCase(login.pending, (state) => {
         state.isLoggingIn = true;
-        state.error = error;
+        state.error = null;
       })
       .addCase(login.fulfilled, (state, action) => {
         state.authUser = action.payload;
@@ -120,6 +120,9 @@ export const authSlice = createSlice({
       .addCase(logout.fulfilled, (state, action) => {
         state.authUser = null;
         state.isAuthenticated = false;
+        state.isSigningUp = false;
+        state.isLoggingIn = false;
+        state.error = null;
       })
       .addCase(logout.rejected, (state, action) => {
         state.error = action.payload;
@@ -127,4 +130,4 @@ export const authSlice = createSlice({
   },
 });
 
-export default authSlice.reducer
+export default authSlice.reducer;

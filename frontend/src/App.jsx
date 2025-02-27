@@ -14,7 +14,7 @@ function App() {
           <Route path="/signup" element={<Login auth="signup" />}></Route>
         </Routes>
       </Router>
-      <Toaster position="bottom-center" reverseOrder={false} />
+      <Toaster reverseOrder={false} />
     </>
   );
 }

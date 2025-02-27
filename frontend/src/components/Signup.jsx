@@ -14,7 +14,7 @@ function Signup() {
     username: "",
     email: "",
     password: "",
-    age: "",
+    dateOfBirth: "",
     gender: "",
   });
 
@@ -25,7 +25,7 @@ function Signup() {
   const handleSignup = (e) => {
     e.preventDefault();
 
-    console.log("Signup Data:", formData);
+    // console.log("Signup Data:", formData);
 
     dispatch(signUp(formData));
     setFormData({
@@ -33,7 +33,7 @@ function Signup() {
       username: "",
       email: "",
       password: "",
-      age: "",
+      dateOfBirth: "",
       gender: "",
     });
     
@@ -97,12 +97,12 @@ function Signup() {
 
           <div className="w-full flex flex-col items-center gap-2">
             <fieldset className="w-3/4 border border-white/30 rounded-2xl py-1">
-              <legend className="mx-3 text-white/60 text-[15px]">Age</legend>
+              <legend className="mx-3 text-white/60 text-[15px]">Date of Birth</legend>
               <input
                 type="date"
-                value={formData.date}
+                value={formData.dateOfBirth}
                 onChange={(e) =>
-                  setFormData({ ...formData, age: e.target.value })
+                  setFormData({ ...formData, dateOfBirth: e.target.value })
                 }
                 className="overflow-hidden w-full bg-transparent border-none outline-none px-3 pb-1 text-white/50"
               />
