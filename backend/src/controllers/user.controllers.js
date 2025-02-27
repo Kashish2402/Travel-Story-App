@@ -25,10 +25,10 @@ const generateAccessAndRefreshToken = async (userId) => {
 };
 
 const signUp = asyncHandler(async (req, res, next) => {
-  const { fullName, email, username, age, password, gender } = req.body;
+  const { fullName, email, username, dateOfBirth, password, gender } = req.body;
 
-  if (!fullName && !email && !username && !age && !password && !gender)
-    return next(new ApiError(200, "FullName, email,age,password required!!!"));
+  if (!fullName && !email && !username && !dateOfBirth && !password && !gender)
+    return next(new ApiError(200, "FullName, email,dateOfBirth,password required!!!"));
 
   const existingUser = await User.findOne({ email });
   if (existingUser)
@@ -44,7 +44,7 @@ const signUp = asyncHandler(async (req, res, next) => {
     email,
     password,
     gender,
-    age,
+    dateOfBirth,
     username,
   });
 
@@ -127,9 +127,9 @@ const logout = asyncHandler(async (req, res, next) => {
 });
 
 const changeUserDetails = asyncHandler(async (req, res, next) => {
-  const { fullName, age, gender } = req.body;
+  const { fullName, dateOfBirth, gender } = req.body;
 
-  if (!fullName || !age || !gender)
+  if (!fullName || !dateOfBirth || !gender)
     return next(
       new ApiError("FullName or age or gender required to update details!!!")
     );
@@ -139,7 +139,7 @@ const changeUserDetails = asyncHandler(async (req, res, next) => {
     {
       $set: {
         fullName,
-        age,
+        dateOfBirth,
         gender,
       },
     },
