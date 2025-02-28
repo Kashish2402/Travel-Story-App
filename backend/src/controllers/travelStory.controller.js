@@ -52,7 +52,7 @@ const getAllStories = asyncHandler(async (req, res, next) => {
   });
 
   if (!stories) return next(new ApiError(400, "Unable to fetch Stories!"));
- console.log(stories)
+//  console.log(stories)
   return res
     .status(200)
     .json(new ApiResponse(200, stories, "All Stories fetched successfully..."));
