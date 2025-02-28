@@ -6,6 +6,7 @@ import {
   editStory,
   filterStories,
   getAllStories,
+  getUserStories,
   searchStory,
   updateIsFavourite,
 } from "../controllers/travelStory.controller.js";
@@ -17,6 +18,7 @@ router.use(verifyJWT);
 
 router.route("/create-travel-story").post(upload.single("imageUrl"), addStory);
 router.route("/fetch-all-stories").get(getAllStories);
+router.route("/fetch-user-stories").get(getUserStories);
 router
   .route("/update-story/:postId")
   .patch(upload.single("imageUrl"), editStory);

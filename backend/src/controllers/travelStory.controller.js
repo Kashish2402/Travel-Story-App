@@ -2,13 +2,12 @@ import { Story } from "../models/travelStory.models.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
-import {uploadOnCloudinary} from "../utils/cloudinary.js"
+import { uploadOnCloudinary } from "../utils/cloudinary.js";
 
 const addStory = asyncHandler(async (req, res, next) => {
-  const { title, description, visitedLocations, visitedDate } =
-    req.body;
+  const { title, description, visitedLocations, visitedDate } = req.body;
 
-    const imageUrl=req.file?.path
+  const imageUrl = req.file?.path;
 
   if (!title || !description || !visitedLocations || !imageUrl || !visitedDate)
     return next(new ApiError(400, "Fields Required"));
@@ -29,7 +28,7 @@ const addStory = asyncHandler(async (req, res, next) => {
     title,
     description,
     visitedLocations,
-    visitedDate:newVisitedDate,
+    visitedDate: newVisitedDate,
     imageUrl: image.url,
     userId: req.user?._id,
   });
@@ -47,12 +46,17 @@ const addStory = asyncHandler(async (req, res, next) => {
 });
 
 const getAllStories = asyncHandler(async (req, res, next) => {
+  const stories=await Story.find()
+  return res.status(200).json(new ApiResponse(200,stories,"All Stories fetched succcessfully"))
+});
+
+const getUserStories = asyncHandler(async (req, res, next) => {
   const stories = await Story.find({ userId: req.user?._id }).sort({
     isFavourite: -1,
   });
 
   if (!stories) return next(new ApiError(400, "Unable to fetch Stories!"));
-//  console.log(stories)
+  //  console.log(stories)
   return res
     .status(200)
     .json(new ApiResponse(200, stories, "All Stories fetched successfully..."));
@@ -82,14 +86,21 @@ const editStory = asyncHandler(async (req, res, next) => {
     updateFields.imageUrl = image.url;
   }
 
-  const story = await Story.findByIdAndUpdate(postId, { $set: updateFields }, { new: true });
+  const story = await Story.findByIdAndUpdate(
+    postId,
+    { $set: updateFields },
+    { new: true }
+  );
 
   if (!story)
-    return next(new ApiError(400, "Something went wrong... Unable to update story"));
+    return next(
+      new ApiError(400, "Something went wrong... Unable to update story")
+    );
 
-  return res.status(200).json(new ApiResponse(200, story, "Story Updated Successfully.."));
+  return res
+    .status(200)
+    .json(new ApiResponse(200, story, "Story Updated Successfully.."));
 });
-
 
 const deleteStory = asyncHandler(async (req, res, next) => {
   const { postId } = req.params;
@@ -192,5 +203,6 @@ export {
   deleteStory,
   updateIsFavourite,
   searchStory,
-  filterStories
+  getUserStories,
+  filterStories,
 };
