@@ -10,7 +10,6 @@ function Login() {
 
   const { error } = useSelector((state) => state.auth);
   const [formData, setFormData] = useState({
-    username: "",
     email: "",
     password: "",
   });
@@ -39,7 +38,6 @@ function Login() {
     dispatch(login(formData));
     navigate("/dashboard")
     setFormData({
-      username: "",
       email: "",
       password: "",
     });
@@ -57,18 +55,6 @@ function Login() {
           onSubmit={handleLogin}
           className="w-full flex flex-col items-center justify-center gap-6"
         >
-          <fieldset className="w-3/4 border border-white/30 rounded-2xl py-1">
-            <legend className="mx-3 text-white/60 text-[15px]">username</legend>
-            <input
-              type="text"
-              value={formData.username}
-              onChange={(e) =>
-                setFormData({ ...formData, username: e.target.value })
-              }
-              className="w-full bg-transparent border-none outline-none px-3 pb-1 text-white/50"
-              placeholder="john22"
-            />
-          </fieldset>
           <fieldset className="w-3/4 border border-white/30 rounded-2xl py-1">
             <legend className="mx-3 text-white/60 text-[15px]">Email</legend>
             <input

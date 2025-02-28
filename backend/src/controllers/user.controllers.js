@@ -65,12 +65,12 @@ const signUp = asyncHandler(async (req, res, next) => {
 });
 
 const login = asyncHandler(async (req, res, next) => {
-  const { username, email, password } = req.body;
+  const {  email, password } = req.body;
 
-  if (!username && !email && !password)
+  if (!email && !password)
     return next(new ApiError(400, "Credentials Required for login!!"));
 
-  const user = await User.findOne({ $or: [{ username }, { email }] });
+  const user = await User.findOne( { email } );
 
   if (!user) return next(new ApiError(404, "User Not Found!!"));
 
