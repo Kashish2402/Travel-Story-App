@@ -37,6 +37,7 @@ function Login() {
     }
 
     dispatch(login(formData));
+    navigate("/dashboard")
     setFormData({
       username: "",
       email: "",

@@ -19,7 +19,7 @@ function Auth({ auth }) {
         )}
         <div className="w-1/2 h-full hidden md:flex relative overflow-hidden">
           <div className="w-full h-full absolute bottom-0 flex flex-col justify-end gap-5  bg-[linear-gradient(180deg,transparent,rgba(0,0,0,1))]">
-            <h4 className="text-4xl text-[#928dab] font-black text-center">
+            <h4 className="text-4xl text-[#928dab] font-black text-center font-[Lobster]">
               Capture Every Journey,
               <br />
               Relive Every Moment.

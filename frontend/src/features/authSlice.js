@@ -48,6 +48,26 @@ export const login = createAsyncThunk(
   }
 );
 
+export const changePassword = createAsyncThunk(
+  "auth/changePassword",
+  async (data, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.patch(
+        "/users/change-password",
+        data
+      );
+
+      toast.success(response.data.message);
+      return response.data.data;
+    } catch (error) {
+      console.log(error.response?.data?.message || "Unable to change password");
+      return rejectWithValue(
+        error.response?.data?.message || "Unable to change password"
+      );
+    }
+  }
+);
+
 export const logout = createAsyncThunk(
   "auth/logout",
   async (_, { rejectWithValue }) => {
@@ -82,6 +102,7 @@ export const authSlice = createSlice({
       .addCase(getUser.fulfilled, (state, action) => {
         state.authUser = action.payload;
         state.isAuthenticated = true;
+        console.log(state.authUser)
       })
       .addCase(getUser.rejected, (state, action) => {
         state.error = action.payload;
@@ -109,6 +130,14 @@ export const authSlice = createSlice({
         state.authUser = action.payload;
         state.isAuthenticated = true;
         state.isLoggingIn = false;
+        console.log(state.authUser.username)
+      })
+      .addCase(changePassword.pending, (state) => {
+        state.error = null;
+      })
+      .addCase(changePassword.fulfilled, (state, action) => {})
+      .addCase(changePassword.rejected, (state, action) => {
+        state.error = action.payload;
       })
       .addCase(login.rejected, (state, action) => {
         state.isLoggingIn = false;
