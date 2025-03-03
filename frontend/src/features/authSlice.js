@@ -102,7 +102,7 @@ export const authSlice = createSlice({
       .addCase(getUser.fulfilled, (state, action) => {
         state.authUser = action.payload;
         state.isAuthenticated = true;
-        console.log(state.authUser)
+        // console.log(state.authUser)
       })
       .addCase(getUser.rejected, (state, action) => {
         state.error = action.payload;
@@ -130,7 +130,7 @@ export const authSlice = createSlice({
         state.authUser = action.payload;
         state.isAuthenticated = true;
         state.isLoggingIn = false;
-        console.log(state.authUser.username)
+        // console.log(state.authUser.username)
       })
       .addCase(changePassword.pending, (state) => {
         state.error = null;
