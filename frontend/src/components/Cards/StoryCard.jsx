@@ -29,11 +29,12 @@ function StoryCard({
     setIsLiked(!isLiked);
   };
   return (
-    <div className="w-[max(50%,400px)] p-3 rounded-xl border-1 border-gray-500/10 flex flex-col items-center gap-4 bg-gray-700/20 drop-shadow-md relative z-20">
+    <div className="w-[max(50%,400px)] p-3 rounded-xl border-1 border-gray-500/10 flex flex-col items-center gap-4 bg-gray-700/20 drop-shadow-md relative z-10">
+     
       <div className="w-full h-30 rounded relative z-0">
         <img
           src={image}
-          className="w-full h-full object-cover object-center "
+          className="w-full h-full object-cover object-center z-0"
         />
       </div>
       <div className="flex flex-col gap-3">
@@ -60,7 +61,7 @@ function StoryCard({
             <p>{user}</p>
           </div>
 
-          <div className="flex items-center gap-2 relative">
+          <div className="flex items-center gap-2 ">
             <button
               className="text-2xl w-6  cursor-pointer"
               onClick={handleLikeButon}
@@ -77,7 +78,7 @@ function StoryCard({
             {showMenu && (
               <div
                 onClick={() => setShowMenu(!showMenu)}
-                className=" w-30 absolute top-8 -right-3 py-2 px-3 bg-gray-400/50 rounded-xl text-white/80 text-sm flex flex-col items-center divide-y-1 divide-gray-400 z-100"
+                className=" w-30 absolute top-[90%] -right-3 py-2 px-3 bg-gray-400/50 rounded-xl text-white/80 text-sm flex flex-col items-center divide-y-1 divide-gray-400 z-[9999]"
                 
               >
                 <h1 className="py-2 w-full text-center cursor-pointer hover:bg-slate-800/50 rounded-xl">

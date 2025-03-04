@@ -16,7 +16,7 @@ function Home() {
   return (
     <div className="flex flex-col items-center gap-20">
       <Navbar />
-      <div className="w-[80%] mx-auto h-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-20 gap-y-6">
+      <div className="w-[80%] mx-auto h-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-20 gap-y-6 relative -z-100">
         {stories.map((story) => (
           <StoryCard
             key={story._id}

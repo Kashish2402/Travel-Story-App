@@ -6,6 +6,7 @@ import { Toaster } from "react-hot-toast";
 import ChangePassword from "./pages/Auth/ChangePassword";
 import { getUser } from "./features/authSlice";
 import { useDispatch, useSelector } from "react-redux";
+import CreateStory from "./pages/CreateStory";
 
 function App() {
   const { authUser } = useSelector((state) => state.auth);
@@ -25,6 +26,10 @@ function App() {
           <Route path="/login" element={<Auth auth="login" />}></Route>
           <Route path="/signup" element={<Auth auth="signup" />}></Route>
           <Route path="/change-password" element={<ChangePassword />}></Route>
+          <Route
+            path="/create-story"
+            element={authUser && <CreateStory />}
+          ></Route>
         </Routes>
       </Router>
       <Toaster reverseOrder={false} />
