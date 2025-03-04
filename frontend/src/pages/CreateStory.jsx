@@ -13,18 +13,14 @@ function CreateStory() {
 
   const [location, setLocation] = useState("");
 
-  //   useEffect(() => {
-  //     console.log("Updated formData:", formData);
-  //   }, [formData]);
-
   const addLocation = () => {
-    // console.log("Added location: ", location);
+    
     if (location.trim()) {
       setFormData((prevFormData) => ({
         ...prevFormData,
         visitedLocations: [...prevFormData.visitedLocations, location.trim()],
       }));
-      //   console.log(formData);
+      
     }
 
     setLocation("");
@@ -39,6 +35,9 @@ function CreateStory() {
     }));
   };
 
+  const handleSubmit=(e)=>{
+    e.preventDefault()
+  }
   return (
     <div>
       <Navbar />
@@ -54,7 +53,7 @@ function CreateStory() {
             </p>
           </div>
 
-          <form className="w-full flex flex-col gap-8">
+          <form className="w-full flex flex-col gap-8" onSubmit={handleSubmit}>
             <div className="w-full flex flex-col gap-3 md:flex-row md:divide-x md:divide-gray-500/40">
               <div className="w-full flex flex-col gap-3 px-3 md:w-1/2">
                 <fieldset className="w-full border border-white/30 rounded-2xl py-1">
