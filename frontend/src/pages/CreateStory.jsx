@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Navbar from "../components/Navbar";
 import { RxCross2 } from "react-icons/rx";
 
@@ -14,13 +14,11 @@ function CreateStory() {
   const [location, setLocation] = useState("");
 
   const addLocation = () => {
-    
     if (location.trim()) {
       setFormData((prevFormData) => ({
         ...prevFormData,
         visitedLocations: [...prevFormData.visitedLocations, location.trim()],
       }));
-      
     }
 
     setLocation("");
@@ -35,9 +33,17 @@ function CreateStory() {
     }));
   };
 
-  const handleSubmit=(e)=>{
-    e.preventDefault()
-  }
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const newFormData=new FormData()
+    newFormData.append("title",formData.title)
+    newFormData.append("description",formData.description)
+    newFormData.append("visitedDate",formData.visitedDate)
+    newFormData.append("visitedLocations",formData.visitedLocations)
+    newFormData.append("image",formData.imageUrl)
+
+  };
+
   return (
     <div>
       <Navbar />
@@ -68,6 +74,7 @@ function CreateStory() {
                     }
                     className="overflow-hidden w-full bg-transparent border-none outline-none px-3 pb-1 text-white/50"
                     placeholder="Visited Manali..."
+                    required
                   />
                 </fieldset>
                 <fieldset className="w-full border border-white/30 rounded-2xl py-1">
@@ -83,6 +90,7 @@ function CreateStory() {
                     }
                     className="overflow-hidden w-full bg-transparent border-none outline-none px-3 pb-1 text-white/50"
                     placeholder="I've gone to manali..."
+                    required
                   ></textarea>
                 </fieldset>
               </div>
@@ -123,6 +131,7 @@ function CreateStory() {
                     onChange={(e) => setLocation(e.target.value)}
                     placeholder="Visited Locations..."
                     className="overflow-hidden w-full bg-transparent border-none outline-none px-3 pb-1 text-white/50 relative"
+                    required
                   />
                   <button
                     type="button"
@@ -142,7 +151,10 @@ function CreateStory() {
                       type="file"
                       className="mt-2 text-white/60 cursor-pointer"
                       accept="image/*, video/*"
-                      multiple
+                      value={formData.imageUrl}
+                      onChange={() =>
+                        setFormData({ ...formData, imageUrl: e.target.value })
+                      }
                     />
                   </label>
                 </div>
