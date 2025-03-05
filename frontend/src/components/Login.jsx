@@ -36,7 +36,7 @@ function Login() {
     }
 
     dispatch(login(formData));
-    navigate("/dashboard")
+    navigate("/dashboard");
     setFormData({
       email: "",
       password: "",
@@ -50,7 +50,7 @@ function Login() {
       <div className="text-[#928dab] text-3xl font-semibold text-center">
         Login to your journal
       </div>
-      <div className="w-full">
+      <div className="w-full flex flex-col gap-8">
         <form
           onSubmit={handleLogin}
           className="w-full flex flex-col items-center justify-center gap-6"
@@ -89,15 +89,15 @@ function Login() {
               <div className="text-white/70 w-fit mx-2">or</div>
               <div className="w-[40%] border border-gray-700"></div>
             </div>
-
-            <button
-              className="bg-[#928dab] w-3/4 py-2 rounded-2xl font-bold border-2 text-[#1f1c2c] border-transparent cursor-pointer hover:border-[#928dab] hover:text-[#928dab] hover:bg-transparent transition-all duration-200 ease-in-out"
-              onClick={() => navigate("/signup")}
-            >
-              Create Account
-            </button>
           </div>
         </form>
+
+        <button
+          className="bg-[#928dab] w-3/4 py-2 rounded-2xl font-bold border-2 text-[#1f1c2c] border-transparent mx-auto cursor-pointer hover:border-[#928dab] hover:text-[#928dab] hover:bg-transparent transition-all duration-200 ease-in-out"
+          onClick={() => navigate("/signup")}
+        >
+          Create Account
+        </button>
       </div>
     </div>
   );

@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import Navbar from "../components/Navbar";
 import { RxCross2 } from "react-icons/rx";
+import { useDispatch } from "react-redux";
+import { addStory } from "../features/travelStorySlice";
 
 function CreateStory() {
   const [formData, setFormData] = useState({
@@ -8,9 +10,10 @@ function CreateStory() {
     description: "",
     visitedLocations: [],
     visitedDate: "",
-    imageUrl: "",
+    imageUrl: null,
   });
 
+  const dispatch=useDispatch()
   const [location, setLocation] = useState("");
 
   const addLocation = () => {
@@ -20,7 +23,6 @@ function CreateStory() {
         visitedLocations: [...prevFormData.visitedLocations, location.trim()],
       }));
     }
-
     setLocation("");
   };
 
@@ -33,15 +35,36 @@ function CreateStory() {
     }));
   };
 
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        imageUrl: file,
+      }));
+    }
+  };
   const handleSubmit = (e) => {
     e.preventDefault();
-    const newFormData=new FormData()
-    newFormData.append("title",formData.title)
-    newFormData.append("description",formData.description)
-    newFormData.append("visitedDate",formData.visitedDate)
-    newFormData.append("visitedLocations",formData.visitedLocations)
-    newFormData.append("image",formData.imageUrl)
+    console.log("Data from form data: ", formData);
+    const newFormData = new FormData();
+    newFormData.append("title", formData.title);
+    newFormData.append("description", formData.description);
+    newFormData.append("visitedDate", formData.visitedDate);
+    newFormData.append(
+      "visitedLocations",
+      JSON.stringify(formData.visitedLocations)
+    );
+    if (formData.imageUrl) newFormData.append("imageUrl", formData.imageUrl);
 
+    dispatch(addStory(newFormData))
+    setFormData({
+      title: "",
+      description: "",
+      visitedLocations: [],
+      visitedDate: "",
+      imageUrl: null,
+    })
   };
 
   return (
@@ -102,14 +125,18 @@ function CreateStory() {
                   <input
                     type="date"
                     className="overflow-hidden w-full bg-transparent border-none outline-none px-3 pb-1 text-white/50"
+                    value={formData.visitedDate}
+                    onChange={(e) =>
+                      setFormData({ ...formData, visitedDate: e.target.value })
+                    }
                   />
                 </fieldset>
-                <fieldset className="w-full border border-white/30 rounded-2xl py-1 relative">
+                <fieldset className="w-full border border-white/30 rounded-2xl py-1 relative ">
                   <legend className="mx-3 text-white/60 text-[15px]">
                     Visited Locations
                   </legend>
                   {formData.visitedLocations.length > 0 && (
-                    <div className="flex items-center ">
+                    <div className="h-[4vh] flex items-center flex-wrap overflow-scroll">
                       {formData.visitedLocations.map((location, index) => {
                         return (
                           <div
@@ -130,13 +157,12 @@ function CreateStory() {
                     value={location}
                     onChange={(e) => setLocation(e.target.value)}
                     placeholder="Visited Locations..."
-                    className="overflow-hidden w-full bg-transparent border-none outline-none px-3 pb-1 text-white/50 relative"
-                    required
+                    className="overflow-hidden w-full bg-transparent border-none outline-none px-3 py-2 text-white/50 relative"
                   />
                   <button
                     type="button"
                     onClick={addLocation}
-                    className="absolute bottom-2 right-2 bg-blue-700 px-2 py-1 rounded-xl cursor-pointer text-white "
+                    className="absolute bottom-2 right-2 bg-blue-700 px-3 py-2 rounded-xl cursor-pointer text-white "
                     disabled={!location.trim()}
                   >
                     Add
@@ -151,10 +177,7 @@ function CreateStory() {
                       type="file"
                       className="mt-2 text-white/60 cursor-pointer"
                       accept="image/*, video/*"
-                      value={formData.imageUrl}
-                      onChange={() =>
-                        setFormData({ ...formData, imageUrl: e.target.value })
-                      }
+                      onChange={handleFileChange}
                     />
                   </label>
                 </div>

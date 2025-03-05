@@ -29,8 +29,58 @@ function StoryCard({
     setIsLiked(!isLiked);
   };
   return (
-    <div className="w-[max(50%,400px)] p-3 rounded-xl border-1 border-gray-500/10 flex flex-col items-center gap-4 bg-gray-700/20 drop-shadow-md relative z-10">
-     
+    <div className="min-w-[350px] max-w-[450px] p-3 rounded-xl border-1 border-gray-500/10 flex flex-col items-center gap-4 bg-gray-700/20 drop-shadow-md relative z-10">
+      <div className="w-full flex justify-between items-center text-white/70">
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 rounded-full overflow-hidden ">
+            <img
+              src={image}
+              className="w-full h-full object-cover object-center"
+            />
+          </div>
+          <p>{user}</p>
+        </div>
+
+        <div className="flex items-center gap-2 ">
+          {/* <button
+              className="text-2xl w-6  cursor-pointer"
+              onClick={handleLikeButon}
+            >
+              {!isLiked ? <BiLike /> : <BiSolidLike />}
+            </button>
+            <span className="w-2">{totalLikes}</span> */}
+
+          <button type="button"
+            onClick={() =>{
+              setShowMenu(!showMenu);
+            }}
+          >
+            <EllipsisVertical className="cursor-pointer relative" />
+          </button>
+
+          {showMenu && (
+            <div
+              
+              className=" w-30 absolute  py-2 px-3 bg-gray-400/50 rounded-xl text-white/80 text-sm flex flex-col items-center divide-y-1 divide-gray-400 "
+            >
+              <h1 className="py-2 w-full text-center cursor-pointer hover:bg-slate-800/50 rounded-xl">
+                View Story
+              </h1>
+              {authUser._id === user && (
+                <h1 className="py-2 w-full text-center cursor-pointer hover:bg-slate-800/50 rounded-xl">
+                  Edit Story
+                </h1>
+              )}
+              {authUser._id === user && (
+                <h1 className="py-2 w-full text-center cursor-pointer hover:bg-slate-800/50 rounded-xl">
+                  Delete Story
+                </h1>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+
       <div className="w-full h-30 rounded relative z-0">
         <img
           src={image}
@@ -48,55 +98,6 @@ function StoryCard({
               View More &gt;&gt;
             </Link>
           </p>
-        </div>
-
-        <div className="w-full flex justify-between items-center text-white/70">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-full overflow-hidden ">
-              <img
-                src={image}
-                className="w-full h-full object-cover object-center"
-              />
-            </div>
-            <p>{user}</p>
-          </div>
-
-          <div className="flex items-center gap-2 ">
-            <button
-              className="text-2xl w-6  cursor-pointer"
-              onClick={handleLikeButon}
-            >
-              {!isLiked ? <BiLike /> : <BiSolidLike />}
-            </button>
-            <span className="w-2">{totalLikes}</span>
-
-            <EllipsisVertical
-              className="cursor-pointer "
-              onClick={() => setShowMenu(!showMenu)}
-            />
-
-            {showMenu && (
-              <div
-                onClick={() => setShowMenu(!showMenu)}
-                className=" w-30 absolute top-[90%] -right-3 py-2 px-3 bg-gray-400/50 rounded-xl text-white/80 text-sm flex flex-col items-center divide-y-1 divide-gray-400 z-[9999]"
-                
-              >
-                <h1 className="py-2 w-full text-center cursor-pointer hover:bg-slate-800/50 rounded-xl">
-                  View Story
-                </h1>
-                {authUser._id === user && (
-                  <h1 className="py-2 w-full text-center cursor-pointer hover:bg-slate-800/50 rounded-xl">
-                    Edit Story
-                  </h1>
-                )}
-                {authUser._id === user && (
-                  <h1 className="py-2 w-full text-center cursor-pointer hover:bg-slate-800/50 rounded-xl">
-                    Delete Story
-                  </h1>
-                )}
-              </div>
-            )}
-          </div>
         </div>
       </div>
     </div>

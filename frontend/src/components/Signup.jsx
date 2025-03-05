@@ -36,7 +36,7 @@ function Signup() {
       dateOfBirth: "",
       gender: "",
     });
-    
+    navigate("/dashboard")
   };
 
   return (
@@ -147,14 +147,16 @@ function Signup() {
               <div className="w-[40%] border border-gray-700"></div>
             </div>
 
-            <button
+           
+          </div>
+        </form>
+
+        <button
               className="bg-[#928dab] w-3/4 py-2 rounded-2xl font-bold border-2 text-[#1f1c2c] border-transparent cursor-pointer hover:border-[#928dab] hover:text-[#928dab] hover:bg-transparent transition-all duration-200 ease-in-out"
               onClick={() => navigate("/login")}
             >
               Login
             </button>
-          </div>
-        </form>
       </div>
     </div>
   );

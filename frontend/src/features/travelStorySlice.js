@@ -22,17 +22,15 @@ export const addStory = createAsyncThunk(
   "story/addStory",
   async (formData, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance(
-        "travelStory/create-travel-story",
+      const response = await axiosInstance.post(
+        "/travelStory/create-travel-story",
         formData
       );
       toast.success(response.data.message);
       return response.data.data;
     } catch (error) {
       console.log(response.data.message);
-      return rejectWithValue(
-        response.data.message || "Unable to add Story"
-      );
+      return rejectWithValue(response.data.message || "Unable to add Story");
     }
   }
 );
@@ -58,6 +56,18 @@ export const StorySlice = createSlice({
       })
       .addCase(fetchStories.rejected, (state, action) => {
         state.isStoriesFetching = false;
+        state.error = action.payload;
+      })
+      .addCase(addStory.pending, (state) => {
+        state.isPostingStory = true;
+        state.error = null;
+      })
+      .addCase(addStory.fulfilled, (state, action) => {
+        state.stories.push(action.payload);
+        state.isPostingStory = false;
+      })
+      .addCase(addStory.rejected, (state, action) => {
+        state.isPostingStory = false;
         state.error = action.payload;
       });
   },

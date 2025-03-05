@@ -7,6 +7,7 @@ import ChangePassword from "./pages/Auth/ChangePassword";
 import { getUser } from "./features/authSlice";
 import { useDispatch, useSelector } from "react-redux";
 import CreateStory from "./pages/CreateStory";
+import Login from "./components/Login";
 
 function App() {
   const { authUser } = useSelector((state) => state.auth);
@@ -28,7 +29,7 @@ function App() {
           <Route path="/change-password" element={<ChangePassword />}></Route>
           <Route
             path="/create-story"
-            element={authUser && <CreateStory />}
+            element={authUser ? <CreateStory />:<Auth auth="login"/>}
           ></Route>
         </Routes>
       </Router>
