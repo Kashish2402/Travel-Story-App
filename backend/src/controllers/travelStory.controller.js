@@ -24,6 +24,14 @@ const addStory = asyncHandler(async (req, res, next) => {
       )
     );
 
+  if (typeof visitedLocations === "string") {
+    try {
+      visitedLocations = JSON.parse(visitedLocations); // Convert string to array
+    } catch (error) {
+      return next(new ApiError(400, "Invalid visitedLocations format"));
+    }
+  }
+
   const travelStory = await Story.create({
     title,
     description,
@@ -46,8 +54,10 @@ const addStory = asyncHandler(async (req, res, next) => {
 });
 
 const getAllStories = asyncHandler(async (req, res, next) => {
-  const stories=await Story.find()
-  return res.status(200).json(new ApiResponse(200,stories,"All Stories fetched succcessfully"))
+  const stories = await Story.find();
+  return res
+    .status(200)
+    .json(new ApiResponse(200, stories, "All Stories fetched succcessfully"));
 });
 
 const getUserStories = asyncHandler(async (req, res, next) => {
