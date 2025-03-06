@@ -55,7 +55,51 @@ const addStory = asyncHandler(async (req, res, next) => {
 });
 
 const getAllStories = asyncHandler(async (req, res, next) => {
-  const stories = await Story.find();
+  const stories = await Story.aggregate([
+    {
+      $lookup: {
+        from: "users",
+        localField: "userId",
+        foreignField: "_id",
+        as: "story_user_details",
+      },
+    },
+    {
+      $unwind: "$story_user_details",
+    },
+    {
+      $lookup: {
+        from: "likes",
+        localField: "_id",
+        foreignField: "storyId",
+        as: "stories_likes",
+      },
+    },
+    {
+      $addFields: {
+        likesCount: {
+          $size: "$stories_likes",
+        },
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        title: 1,
+        description: 1,
+        visitedDate: 1,
+        visitedLocations: 1,
+        imageUrl: 1,
+        createdAt: 1,
+        updatedAt: 1,
+        user: {
+          username: "$story_user_details.username",
+          profilePic: "$story_user_details.profilePic.url",
+        },
+        likesCount:1
+      },
+    },
+  ]);
   return res
     .status(200)
     .json(new ApiResponse(200, stories, "All Stories fetched succcessfully"));
@@ -70,7 +114,7 @@ const getUserStories = asyncHandler(async (req, res, next) => {
     },
     {
       $lookup: {
-        from: "User",
+        from: "users",
         localField: "userId",
         foreignField: "_id",
         as: "user",
@@ -95,23 +139,23 @@ const getUserStories = asyncHandler(async (req, res, next) => {
       },
     },
     {
-      $lookups:{
-        from:"Like",
-        localField:"_id",
-        foreignField:"storyId",
-        as:"likes"
+      $lookups: {
+        from: "likes",
+        localField: "_id",
+        foreignField: "storyId",
+        as: "liked_stories",
       },
     },
     {
-      $addFields:{
-        likesCount:{$size:"$likes"}
-      }
+      $addFields: {
+        likesCount: { $size: "$liked_stories" },
+      },
     },
     {
-      $project:{
-        likes:0
-      }
-    }
+      $project: {
+        liked_stories: 0,
+      },
+    },
   ]);
 
   if (!stories) return next(new ApiError(400, "Unable to fetch Stories!"));
