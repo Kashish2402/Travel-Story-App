@@ -3,6 +3,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import mongoose from "mongoose";
 
 const addStory = asyncHandler(async (req, res, next) => {
   const { title, description, visitedLocations, visitedDate } = req.body;
@@ -61,9 +62,57 @@ const getAllStories = asyncHandler(async (req, res, next) => {
 });
 
 const getUserStories = asyncHandler(async (req, res, next) => {
-  const stories = await Story.find({ userId: req.user?._id }).sort({
-    isFavourite: -1,
-  });
+  const stories = await Story.aggregate([
+    {
+      $match: {
+        userId: mongoose.Types.ObjectId(req.user?._id),
+      },
+    },
+    {
+      $lookup: {
+        from: "User",
+        localField: "userId",
+        foreignField: "_id",
+        as: "user",
+      },
+    },
+    {
+      $unwind: "$user",
+    },
+    {
+      $project: {
+        _id: 1,
+        title: 1,
+        description: 1,
+        imageUrl: 1,
+        visitedDate: 1,
+        createdAt: 1,
+        updatedAt: 1,
+        user: {
+          username: "$user.username",
+          profilePic: "$user.profilePic.url",
+        },
+      },
+    },
+    {
+      $lookups:{
+        from:"Like",
+        localField:"_id",
+        foreignField:"storyId",
+        as:"likes"
+      },
+    },
+    {
+      $addFields:{
+        likesCount:{$size:"$likes"}
+      }
+    },
+    {
+      $project:{
+        likes:0
+      }
+    }
+  ]);
 
   if (!stories) return next(new ApiError(400, "Unable to fetch Stories!"));
   //  console.log(stories)
