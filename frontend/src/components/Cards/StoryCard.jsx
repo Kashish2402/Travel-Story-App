@@ -2,20 +2,25 @@ import { BiLike, BiSolidLike } from "react-icons/bi";
 import React, { useRef, useState, useEffect } from "react";
 import { EllipsisVertical } from "lucide-react";
 import { useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { formatDate } from "../../utils/formatDate";
 
 function StoryCard({
   id,
+  profilepic,
   title,
   description,
-  user,
+  username,
   image,
   visitedLocations,
   visitedDate,
   createdAt,
   updatedAt,
+  likes,
 }) {
   const { authUser } = useSelector((state) => state.auth);
+
+  const navigate = useNavigate();
   const [isLiked, setIsLiked] = useState(false);
   const [totalLikes, setTotalLikes] = useState(0);
 
@@ -44,16 +49,16 @@ function StoryCard({
     setIsLiked(!isLiked);
   };
   return (
-    <div className="max-w-[450px] min-w-[350px] p-3 rounded-xl border-1 border-gray-500/10 flex flex-col items-center gap-4 bg-gray-700/20 drop-shadow-md relative z-20">
-      <div className="w-full flex justify-between items-center text-white/70">
+    <div className="max-w-[450px] min-w-[350px] p-3 rounded-xl border-1 border-gray-500/10 flex flex-col items-center justify-between gap-4 bg-gray-700/20 drop-shadow-md relative z-20">
+      <div className="w-full flex justify-between items-center text-white/70 py-1">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-full overflow-hidden ">
+          <div className="w-7 h-7 rounded-full overflow-hidden ">
             <img
-              src={image}
+              src={profilepic || "./OIP.jpeg"}
               className="w-full h-full object-cover object-center"
             />
           </div>
-          <p>{user}</p>
+          <p className="text-lg">{username}</p>
         </div>
 
         <div className="flex items-center gap-2 relative">
@@ -68,15 +73,18 @@ function StoryCard({
               onClick={() => setShowMenu(!showMenu)}
               className=" w-30 absolute top-8 -right-3 py-2 px-3 bg-gray-600 rounded-xl text-white/80 text-sm flex flex-col items-center divide-y-1 divide-gray-400 z-100"
             >
-              <h1 className="py-2 w-full text-center cursor-pointer hover:bg-slate-800/50 rounded-xl">
+              <h1
+                className="py-2 w-full text-center cursor-pointer hover:bg-slate-800/50 rounded-xl"
+                onClick={() => navigate(`../story/${id}`)}
+              >
                 View Story
               </h1>
-              {authUser._id === user && (
+              {authUser.username === username && (
                 <h1 className="py-2 w-full text-center cursor-pointer hover:bg-slate-800/50 rounded-xl">
                   Edit Story
                 </h1>
               )}
-              {authUser._id === user && (
+              {authUser.username === username && (
                 <h1 className="py-2 w-full text-center cursor-pointer hover:bg-slate-800/50 rounded-xl">
                   Delete Story
                 </h1>
@@ -106,13 +114,16 @@ function StoryCard({
       <div className="flex flex-col gap-3">
         <div className="flex flex-col gap-2 px-3">
           <h1 className="text-2xl tracking-wide text-white/70">
-            {title.length <= 26 ? title: title.slice(0, 26) + "..."}
+            {title.length <= 26 ? title : title.slice(0, 26) + "..."}
           </h1>
           <p className="tracking-tight text-sm text-gray-500/80">
             {description.length <= 200
               ? description
               : description.slice(0, 200) + "...."}{" "}
-            <Link className="text-xs text-blue-600 hover:underline" to={`/${id}`}>
+            <Link
+              className="text-xs text-blue-600 hover:underline"
+              to={`/story/${id}`}
+            >
               View More &gt;&gt;
             </Link>
           </p>
@@ -126,12 +137,12 @@ function StoryCard({
             >
               {!isLiked ? <BiLike /> : <BiSolidLike />}
             </button>
-            <span className="w-2">{totalLikes}</span>
+            <span className="w-2">{likes}</span>
           </div>
-          <p className="text-sm text-gray-400">
-            {createdAt === updatedAt
-              ? `Created At ${createdAt}`
-              : `Last Updated on ${updatedAt}`}
+          <p className="text-sm text-gray-400/50">
+            {!updatedAt
+              ? ` ${formatDate(createdAt)}`
+              : `Last Updated on ${formatDate(updatedAt)}`}
           </p>
         </div>
       </div>

@@ -32,7 +32,7 @@ function App() {
             path="/create-story"
             element={authUser ? <CreateStory />:<Auth auth="login"/>}
           ></Route>
-          <Route path="/:id" element={<Story/>}></Route>
+          <Route path="/story/:id" element={<Story/>}></Route>
         </Routes>
       </Router>
       <Toaster reverseOrder={false} />

@@ -35,7 +35,9 @@ function Home() {
                   title={story.title}
                   description={story.description}
                   createdAt={story.createdAt}
-                  user={story.userId}
+                  username={story.user.username}
+                  profilePic={story.user.profilepic}
+                  likes={story.likesCount}
                   visitedLocations={story.visitedLocations || []}
                   visitedDate={story.visitedDate}
                   updatedAt={story.UpdatedAt}
