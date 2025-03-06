@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
 function StoryCard({
+  id,
   title,
   description,
   user,
@@ -111,7 +112,7 @@ function StoryCard({
             {description.length <= 200
               ? description
               : description.slice(0, 200) + "...."}{" "}
-            <Link className="text-xs text-blue-600 hover:underline">
+            <Link className="text-xs text-blue-600 hover:underline" to={`/${id}`}>
               View More &gt;&gt;
             </Link>
           </p>

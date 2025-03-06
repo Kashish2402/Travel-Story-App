@@ -31,6 +31,7 @@ function Home() {
               {stories.map((story) => (
                 <StoryCard
                   key={story._id}
+                  id={story._id}
                   title={story.title}
                   description={story.description}
                   createdAt={story.createdAt}
