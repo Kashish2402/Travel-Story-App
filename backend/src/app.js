@@ -21,9 +21,11 @@ app.use(cookieParser());
 
 import userRoutes from './routes/user.routes.js'
 import storyRoutes from './routes/travelStory.routes.js'
+import likeRoutes from "./routes/like.routes.js"
 
 app.use("/api/v1/users",userRoutes)
 app.use("/api/v1/travelStory",storyRoutes)
+app.use("/api/v1/likes",likeRoutes)
 
 app.use(errorHandler);
 export { app };
