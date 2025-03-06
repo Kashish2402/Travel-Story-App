@@ -1,5 +1,5 @@
 import mongoose, { Schema } from "mongoose";
-import { User } from "./user.models.js";
+
 
 const travelStorySchema = new Schema(
   {
@@ -21,7 +21,7 @@ const travelStorySchema = new Schema(
     },
     userId: {
       type: Schema.Types.ObjectId,
-      ref: User,
+      ref: "User",
     },
     imageUrl: {
       type: String,
