@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import CreateStory from "./pages/CreateStory";
 import Login from "./components/Login";
 import Story from "./pages/Story";
+import Profile from "./pages/Profile/Profile";
 
 function App() {
   const { authUser } = useSelector((state) => state.auth);
@@ -33,6 +34,7 @@ function App() {
             element={authUser ? <CreateStory />:<Auth auth="login"/>}
           ></Route>
           <Route path="/story/:id" element={<Story/>}></Route>
+          <Route path="/profile/:authUser/:id" element={<Profile/>}></Route>
         </Routes>
       </Router>
       <Toaster reverseOrder={false} />

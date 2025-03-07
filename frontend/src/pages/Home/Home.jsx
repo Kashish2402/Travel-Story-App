@@ -27,7 +27,7 @@ function Home() {
             Recent Posts
           </h1>
           
-            <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-20 gap-y-6 relative">
+            <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-6 relative">
               {stories.map((story) => (
                 <StoryCard
                   key={story._id}
@@ -36,7 +36,7 @@ function Home() {
                   description={story.description}
                   createdAt={story.createdAt}
                   username={story.user.username}
-                  profilePic={story.user.profilepic}
+                  profilePic={story.user.profilePic}
                   likes={story.likesCount}
                   visitedLocations={story.visitedLocations || []}
                   visitedDate={story.visitedDate}

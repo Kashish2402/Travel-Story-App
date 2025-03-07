@@ -109,7 +109,7 @@ const getUserStories = asyncHandler(async (req, res, next) => {
   const stories = await Story.aggregate([
     {
       $match: {
-        userId: mongoose.Types.ObjectId(req.user?._id),
+        userId: new mongoose.Types.ObjectId(req.user?._id),
       },
     },
     {
@@ -139,7 +139,7 @@ const getUserStories = asyncHandler(async (req, res, next) => {
       },
     },
     {
-      $lookups: {
+      $lookup: {
         from: "likes",
         localField: "_id",
         foreignField: "storyId",

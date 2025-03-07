@@ -18,6 +18,19 @@ export const fetchStories = createAsyncThunk(
   }
 );
 
+export const getUserStories=createAsyncThunk("story/getUserStories",async(_,{rejectWithValue})=>{
+  try {
+    const response=await axiosInstance.get(`/travelStory/fetch-user-stories`)
+    toast.success(response.data.message)
+    return response.data.data
+  } catch (error) {
+    console.log(response.data.message);
+      return rejectWithValue(
+        response.data.message || "Unable to fetch Stories"
+      );
+  }
+})
+
 export const addStory = createAsyncThunk(
   "story/addStory",
   async (formData, { rejectWithValue }) => {
@@ -39,6 +52,7 @@ export const StorySlice = createSlice({
   name: "story",
   initialState: {
     stories: [],
+    yourStories:[],
     isStoriesFetching: false,
     isPostingStory: false,
     error: null,
@@ -69,6 +83,15 @@ export const StorySlice = createSlice({
       .addCase(addStory.rejected, (state, action) => {
         state.isPostingStory = false;
         state.error = action.payload;
+      }).addCase(getUserStories.pending,(state)=>{
+        state.error=null,
+        state.isStoriesFetching=true
+      }).addCase(getUserStories.fulfilled,(state,action)=>{
+        state.yourStories=action.payload
+        state.isStoriesFetching=false
+      }).addCase(getUserStories.rejected,(state,action)=>{
+        state.error=action.payload
+        state.isStoriesFetching=false
       });
   },
 });

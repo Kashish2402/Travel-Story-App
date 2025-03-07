@@ -7,7 +7,8 @@ import { formatDate } from "../../utils/formatDate";
 
 function StoryCard({
   id,
-  profilepic,
+  className="max-w-[450px] min-w-[350px]",
+  profilePic,
   title,
   description,
   username,
@@ -49,12 +50,12 @@ function StoryCard({
     setIsLiked(!isLiked);
   };
   return (
-    <div className="max-w-[450px] min-w-[350px] p-3 rounded-xl border-1 border-gray-500/10 flex flex-col items-center justify-between gap-4 bg-gray-700/20 drop-shadow-md relative z-20">
+    <div className={` p-3 rounded-xl border-1 border-gray-500/10 flex flex-col items-center justify-between gap-4 bg-gray-700/20 drop-shadow-md relative z-20 ${className}`}>
       <div className="w-full flex justify-between items-center text-white/70 py-1">
         <div className="flex items-center gap-2">
           <div className="w-7 h-7 rounded-full overflow-hidden ">
             <img
-              src={profilepic || "./OIP.jpeg"}
+              src={profilePic || "/OIP.jpeg"}
               className="w-full h-full object-cover object-center"
             />
           </div>
