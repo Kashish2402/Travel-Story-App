@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
 import Navbar from "../../components/Navbar";
 import { useDispatch, useSelector } from "react-redux";
-import { Dot, Edit } from "lucide-react";
+import { Dot, Edit, X } from "lucide-react";
 import { formatDateOfBirth } from "../../utils/formatDate";
 import { getUserStories } from "../../features/travelStorySlice";
-import StoryCard from "../../components/Cards/StoryCard";
 import { getLikedStories } from "../../features/likeSlice";
 import UserPosts from "../../components/UserPosts";
 import LikePosts from "../../components/LikePosts";
@@ -12,6 +11,7 @@ import LikePosts from "../../components/LikePosts";
 function Profile() {
   const [tab, setTab] = useState("your-posts");
   const { authUser } = useSelector((state) => state.auth);
+ 
   const { yourStories } = useSelector((state) => state.story);
   const { likedStories } = useSelector((state) => state.like);
 
@@ -21,7 +21,9 @@ function Profile() {
     dispatch(getLikedStories());
   }, [dispatch]);
 
-  const handleEdit = () => {};
+  const handleEdit = () => {
+    setIsModalOpen(!isModalOpen);
+  };
   return (
     <div>
       <Navbar />
@@ -123,6 +125,8 @@ function Profile() {
           )}
         </div>
       </div>
+
+      
     </div>
   );
 }

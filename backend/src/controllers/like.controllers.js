@@ -35,7 +35,7 @@ const getLikedStories = asyncHandler(async (req, res, next) => {
   const likedStories = await Like.aggregate([
     {
       $match: {
-        userId: mongoose.Types.ObjectId(req.user?._id),
+        userId:new mongoose.Types.ObjectId(req.user?._id),
       },
     },
     {

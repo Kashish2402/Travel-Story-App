@@ -12,6 +12,7 @@ function Home() {
   const navigate = useNavigate();
 
   const dispatch = useDispatch();
+  
   useEffect(() => {
     dispatch(fetchStories());
   }, [dispatch]);
@@ -48,7 +49,7 @@ function Home() {
           </div>
         
 
-        <div className="fixed bottom-10 right-10 text-3xl bg-blue-700 p-3 text-white/60 rounded-full cursor-pointer">
+        <div className="fixed bottom-10 right-10 text-3xl bg-blue-700 p-3 text-white/60 rounded-full cursor-pointer z-999">
           <Plus size={20} onClick={() => navigate("/create-story")} />
         </div>
       </div>
