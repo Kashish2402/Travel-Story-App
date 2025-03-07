@@ -17,7 +17,7 @@ function Home() {
     dispatch(fetchStories());
   }, [dispatch]);
 
-  console.log(stories);
+  // console.log(stories);
   return (
   
       <div className="w-full flex flex-col items-center gap-10 mb-3 relative">
@@ -43,6 +43,7 @@ function Home() {
                   visitedDate={story.visitedDate}
                   updatedAt={story.UpdatedAt}
                   image={story.imageUrl ? story.imageUrl : "./OIP.jpeg"}
+                  isLiked={story.isLiked}
                 />
               ))}
             </div>

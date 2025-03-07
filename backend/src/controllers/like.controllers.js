@@ -16,18 +16,32 @@ const toggleLike = asyncHandler(async (req, res, next) => {
 
   if (like) {
     await Like.findByIdAndDelete(like?._id);
+    const totalLikes = await Like.countDocuments({ storyId });
     return res
       .status(200)
-      .json(new ApiResponse(200, "Unliked Video Successfully"));
+      .json(
+        new ApiResponse(
+          200,
+          { isLiked: false, totalLikes },
+          "Unliked Video Successfully"
+        )
+      );
   } else {
     await Like.create({
       userId: req.user._id,
       storyId,
     });
 
+    const totalLikes = await Like.countDocuments({ storyId });
     return res
       .status(200)
-      .json(new ApiResponse(200, "Liked Video Successfully"));
+      .json(
+        new ApiResponse(
+          200,
+          { isLiked: true, totalLikes },
+          "Liked Video Successfully"
+        )
+      );
   }
 });
 
@@ -35,7 +49,7 @@ const getLikedStories = asyncHandler(async (req, res, next) => {
   const likedStories = await Like.aggregate([
     {
       $match: {
-        userId:new mongoose.Types.ObjectId(req.user?._id),
+        userId: new mongoose.Types.ObjectId(req.user?._id),
       },
     },
     {

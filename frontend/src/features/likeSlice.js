@@ -17,11 +17,28 @@ export const getLikedStories = createAsyncThunk(
   }
 );
 
+export const toggleLike = createAsyncThunk(
+  "like/toggleLike",
+  async (storyId, { rejectWithValue }) => {
+    try {
+      console.log(storyId)
+      const response = await axiosInstance.post(`/likes/like/${storyId}`);
+
+      return response.data.data;
+    } catch (error) {
+      console.log(response.data.message);
+      return rejectWithValue(
+        response.data.message || "Error toggling like"
+      );
+    }
+  }
+);
+
 export const likeSlice = createSlice({
   name: "like",
   initialState: {
     likedStories: [],
-    errors: null,
+    error: null,
     isFetchingLikedStories: false,
   },
 
@@ -38,7 +55,24 @@ export const likeSlice = createSlice({
       .addCase(getLikedStories.rejected, (state, action) => {
         state.error = action.payload;
         state.isFetchingLikedStories = false;
-      });
+      })
+      .addCase(toggleLike.pending, (state) => {
+        state.error = null;
+      })
+      .addCase(toggleLike.fulfilled, (state, action) => {
+        const {isLiked,totalLikes} = action.payload;
+        const index = state.likedStories.findIndex(
+          (story) => story._id === action.meta.arg
+        );
+
+        if (isLiked) {
+          if (index === -1) state.likedStories.push({ _id: action.meta.arg });
+        } else {
+          if (index !== -1) state.likedStories.splice(index, 1);
+        }
+      }).addCase(toggleLike.rejected, (state, action) => {
+        state.error = action.payload;
+      });;
   },
 });
 

@@ -21,6 +21,7 @@ function UserPosts() {
           visitedDate={story.visitedDate}
           updatedAt={story.UpdatedAt}
           image={story.imageUrl ? story.imageUrl : "./OIP.jpeg"}
+          isLiked={story.isLiked}
         />
       ))}
     </div>

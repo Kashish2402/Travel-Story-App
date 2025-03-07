@@ -80,6 +80,9 @@ const getAllStories = asyncHandler(async (req, res, next) => {
         likesCount: {
           $size: "$stories_likes",
         },
+        isLiked: {
+          $in: [req.user?._id , "$stories_likes.userId"],
+        },
       },
     },
     {
@@ -96,7 +99,8 @@ const getAllStories = asyncHandler(async (req, res, next) => {
           username: "$story_user_details.username",
           profilePic: "$story_user_details.profilePic.url",
         },
-        likesCount:1
+        likesCount: 1,
+        isLiked:1
       },
     },
   ]);
@@ -149,11 +153,22 @@ const getUserStories = asyncHandler(async (req, res, next) => {
     {
       $addFields: {
         likesCount: { $size: "$liked_stories" },
+        likedUserIds: {
+          $map: { input: "$liked_stories", as: "like", in: "$$like.userId" },
+        },
+      },
+    },
+    {
+      $addFields: {
+        isLiked: {
+          $in: [new mongoose.Types.ObjectId(req.user?._id), "$likedUserIds"],
+        },
       },
     },
     {
       $project: {
         liked_stories: 0,
+        
       },
     },
   ]);

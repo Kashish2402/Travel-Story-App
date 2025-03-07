@@ -1,13 +1,14 @@
 import { BiLike, BiSolidLike } from "react-icons/bi";
 import React, { useRef, useState, useEffect } from "react";
 import { EllipsisVertical } from "lucide-react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { formatDate } from "../../utils/formatDate";
+import { getLikedStories, toggleLike } from "../../features/likeSlice";
 
 function StoryCard({
   id,
-  className="max-w-[450px] min-w-[350px]",
+  className = "max-w-[450px] min-w-[350px]",
   profilePic,
   title,
   description,
@@ -18,16 +19,17 @@ function StoryCard({
   createdAt,
   updatedAt,
   likes,
+  isLiked
 }) {
   const { authUser } = useSelector((state) => state.auth);
-
+  const { likedStories } = useSelector((state) => state.like);
   const navigate = useNavigate();
-  const [isLiked, setIsLiked] = useState(false);
-  const [totalLikes, setTotalLikes] = useState(0);
-
+  const [totalLikes, setTotalLikes] = useState(likes);
+  const [liked, setLiked] = useState(isLiked);
   const [showMenu, setShowMenu] = useState(false);
 
   const menuRef = useRef(null);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -41,16 +43,32 @@ function StoryCard({
     };
   }, []);
 
-  const handleLikeButon = () => {
-    if (isLiked) {
-      setTotalLikes((prev) => prev - 1);
-    } else {
-      setTotalLikes((prev) => prev + 1);
+  useEffect(() => {
+    dispatch(getLikedStories());
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (likedStories.length > 0) {
+      const isLiked = likedStories.some((story) => story._id === id);
+      setLiked(isLiked);
     }
-    setIsLiked(!isLiked);
+  }, [likedStories, id]);
+
+ 
+
+  const handleLikeButon = async (id) => {
+    try {
+      const response = await dispatch(toggleLike(id)).unwrap();
+      setLiked(response.isLiked);
+      setTotalLikes(response.totalLikes);
+    } catch (error) {
+      console.error("Like toggle failed:", error);
+    }
   };
   return (
-    <div className={` p-3 rounded-xl border-1 border-gray-500/10 flex flex-col items-center justify-between gap-4 bg-gray-700/20 drop-shadow-md relative z-20 ${className}`}>
+    <div
+      className={` p-3 rounded-xl border-1 border-gray-500/10 flex flex-col items-center justify-between gap-4 bg-gray-700/20 drop-shadow-md relative z-20 ${className}`}
+    >
       <div className="w-full flex justify-between items-center text-white/70 py-1">
         <div className="flex items-center gap-2">
           <div className="w-7 h-7 rounded-full overflow-hidden ">
@@ -134,11 +152,11 @@ function StoryCard({
           <div className="flex items-center gap-2 text-white/60">
             <button
               className="text-2xl w-6  cursor-pointer"
-              onClick={handleLikeButon}
+              onClick={() => handleLikeButon(id)}
             >
-              {!isLiked ? <BiLike /> : <BiSolidLike />}
+              {!liked ? <BiLike /> : <BiSolidLike />}
             </button>
-            <span className="w-2">{likes}</span>
+            <span className="w-2">{totalLikes}</span>
           </div>
           <p className="text-sm text-gray-400/50">
             {!updatedAt
