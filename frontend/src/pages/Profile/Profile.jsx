@@ -6,6 +6,8 @@ import { formatDateOfBirth } from "../../utils/formatDate";
 import { getUserStories } from "../../features/travelStorySlice";
 import StoryCard from "../../components/Cards/StoryCard";
 import { getLikedStories } from "../../features/likeSlice";
+import UserPosts from "../../components/UserPosts";
+import LikePosts from "../../components/LikePosts";
 
 function Profile() {
   const [tab, setTab] = useState("your-posts");
@@ -19,9 +21,7 @@ function Profile() {
     dispatch(getLikedStories());
   }, [dispatch]);
 
-  const handleEdit=()=>{
-    
-  }
+  const handleEdit = () => {};
   return (
     <div>
       <Navbar />
@@ -50,8 +50,6 @@ function Profile() {
         </div>
 
         <div className="flex items-center justify-center">
-
-          
           <span className="text-2xl text-white/80 font-bold">
             {authUser?.fullName}
           </span>
@@ -62,7 +60,12 @@ function Profile() {
         </div>
 
         <div className="w-3/4 mt-10 flex flex-col divide-y divide-gray-500/50 gap-4 relative">
-        <button className="absolute -top-10 text-white/70 right-0 cursor-pointer" onClick={handleEdit}><Edit/></button>
+          <button
+            className="absolute -top-10 text-white/70 right-0 cursor-pointer"
+            onClick={handleEdit}
+          >
+            <Edit />
+          </button>
           <div className="flex items-center justify-between pb-4">
             <span className="text-white/60">Email Address</span>
 
@@ -104,64 +107,20 @@ function Profile() {
             </div>
           </div>
 
-          {tab === "your-posts" && yourStories?.length > 0 && (
-            <div className="w-full grid grid-cols-1 lg:grid-cols-3 gap-x-40 gap-y-6 mt-10 overflow-x-hidden">
-              {yourStories.map((story) => (
-                <StoryCard
-                  className="min-w-[350px] max-w-[450px]"
-                  key={story._id}
-                  id={story._id}
-                  title={story.title}
-                  description={story.description}
-                  createdAt={story.createdAt}
-                  username={story.user.username}
-                  profilePic={story.user.profilePic}
-                  likes={story.likesCount}
-                  visitedLocations={story.visitedLocations || []}
-                  visitedDate={story.visitedDate}
-                  updatedAt={story.UpdatedAt}
-                  image={story.imageUrl ? story.imageUrl : "./OIP.jpeg"}
-                />
-              ))}
+          {tab === "your-posts" && yourStories?.length > 0 && <UserPosts />}
+
+          {tab === "your-posts" && yourStories.length === 0 && (
+            <div className="text-lg tracking-wide text-white/40 w-full text-center pt-20">
+              No Posts By User Available
             </div>
           )}
 
-          {tab === "your-posts" &&yourStories.length === 0 && (
+          {tab === "liked-posts" && likedStories?.length > 0 && <LikePosts />}
+          {tab === "liked-posts" && likedStories.length === 0 && (
             <div className="text-lg tracking-wide text-white/40 w-full text-center pt-20">
               No Liked Posts Available
             </div>
           )}
-
-          {tab === "liked-posts" && likedStories?.length > 0 && (
-            <div>
-              <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-x-40 gap-y-6 mt-10">
-                {likedStories.map((story) => (
-                  <StoryCard
-                    key={story._id}
-                    id={story._id}
-                    title={story.title}
-                    description={story.description}
-                    createdAt={story.createdAt}
-                    username={story.user.username}
-                    profilePic={story.user.profilePic}
-                    likes={story.likesCount}
-                    visitedLocations={story.visitedLocations || []}
-                    visitedDate={story.visitedDate}
-                    updatedAt={story.UpdatedAt}
-                    image={story.imageUrl ? story.imageUrl : "./OIP.jpeg"}
-                  />
-                ))}
-              </div>
-            
-            </div>
-          )}
-            {tab === "liked-posts" && likedStories.length === 0 && (
-            <div className="text-lg tracking-wide text-white/40 w-full text-center pt-20">
-              No Liked Posts Available
-            </div>
-          )}
-
-        
         </div>
       </div>
     </div>
