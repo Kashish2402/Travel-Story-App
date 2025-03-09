@@ -16,7 +16,7 @@ function Profile() {
   const { likedStories } = useSelector((state) => state.like);
 
   const dispatch = useDispatch();
-  
+
   useEffect(() => {
     dispatch(getUserStories());
   }, [dispatch]);
@@ -33,7 +33,7 @@ function Profile() {
   return (
     <div>
       <Navbar />
-      <div className="w-[70%] mx-auto flex flex-col items-center justify-center">
+      <div className="w-[70%] mx-auto flex flex-col items-center justify-center pt-26">
         <div className="relative w-full h-full mb-24">
           <div className="w-full h-56 shadow-2xl">
             <img
