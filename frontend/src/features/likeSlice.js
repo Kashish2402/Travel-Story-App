@@ -1,29 +1,24 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { axiosInstance } from "../lib/axios";
+import toast from "react-hot-toast";
 
-export const getLikedStories = createAsyncThunk(
-  "like/getLikedStories",
-  async (_, { rejectWithValue }) => {
-    try {
-      const response = await axiosInstance.get("/likes/get-liked-stories");
-      toast.success(response.data.message);
-      return response.data.data;
-    } catch (error) {
-      console.log(response.data.message);
+export const getLikedStories=createAsyncThunk("like/getLikedStories",async(_,{rejectWithValue})=>{
+  try {
+    const response=await axiosInstance.get("/likes/get-liked-stories")
+    return response.data.data
+  } catch (error) {
+    console.log(response.data.message);
       return rejectWithValue(
-        response.data.message || "Unable to fetch liked Stories"
+        response.data.message || "Error getting liked videos.."
       );
-    }
   }
-);
+})
 
 export const toggleLike = createAsyncThunk(
   "like/toggleLike",
   async (storyId, { rejectWithValue }) => {
     try {
-      console.log(storyId)
       const response = await axiosInstance.post(`/likes/like/${storyId}`);
-
       return response.data.data;
     } catch (error) {
       console.log(response.data.message);
@@ -49,6 +44,7 @@ export const likeSlice = createSlice({
         state.isFetchingLikedStories = true;
       })
       .addCase(getLikedStories.fulfilled, (state, action) => {
+        
         state.likedStories = action.payload;
         state.isFetchingLikedStories = false;
       })

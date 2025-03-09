@@ -44,7 +44,7 @@ function ProfileInfo() {
 
       {showMenu && (
         <div
-          className="absolute -bottom-24 left-0 text-white/60 rounded-xl px-4 bg-gray-600 p-2 flex flex-col divide-y divide-gray-800"
+          className="absolute -bottom-24 left-0 text-white/60 rounded-xl px-4 bg-gray-600 p-2 flex flex-col divide-y z-99 divide-gray-800"
           ref={menuRef}
         >
           <h1

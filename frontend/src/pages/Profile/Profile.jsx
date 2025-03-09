@@ -16,10 +16,16 @@ function Profile() {
   const { likedStories } = useSelector((state) => state.like);
 
   const dispatch = useDispatch();
+  
   useEffect(() => {
     dispatch(getUserStories());
-    dispatch(getLikedStories());
   }, [dispatch]);
+
+  useEffect(()=>{
+    dispatch(getLikedStories())
+  },[dispatch])
+
+ 
 
   const handleEdit = () => {
     setIsModalOpen(!isModalOpen);

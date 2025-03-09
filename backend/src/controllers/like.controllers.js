@@ -60,8 +60,31 @@ const getLikedStories = asyncHandler(async (req, res, next) => {
         as: "storyDetails",
       },
     },
+    { $unwind: "$storyDetails" },
     {
-      $unwind: "$storyDetails",
+      $lookup: {
+        from: "users",
+        localField: "storyDetails.userId",
+        foreignField: "_id",
+        as: "user",
+      },
+    },
+    { $unwind: "$user" },
+    {
+      $lookup: {
+        from: "likes",
+        localField: "storyDetails._id",
+        foreignField: "storyId",
+        as: "story_likes",
+      },
+    },
+    {
+      $addFields: {
+        likesCount: { $size: "$story_likes" },
+        isLiked: {
+          $in: [new mongoose.Types.ObjectId(req.user?._id), "$story_likes.userId"],
+        },
+      },
     },
     {
       $project: {
@@ -70,9 +93,14 @@ const getLikedStories = asyncHandler(async (req, res, next) => {
         description: "$storyDetails.description",
         imageUrl: "$storyDetails.imageUrl",
         visitedDate: "$storyDetails.visitedDate",
-        userId: "$storyDetails.userId",
         createdAt: "$storyDetails.createdAt",
         updatedAt: "$storyDetails.updatedAt",
+        user: {
+          username: "$user.username",
+          profilePic: "$user.profilePic.url",
+        },
+        likesCount: 1,
+        isLiked: 1,
       },
     },
   ]);
@@ -80,8 +108,9 @@ const getLikedStories = asyncHandler(async (req, res, next) => {
   return res
     .status(200)
     .json(
-      new ApiResponse(200, likedStories, "Liked Videos fetched Successfully")
+      new ApiResponse(200, likedStories, "Liked Stories fetched Successfully")
     );
 });
+
 
 export { toggleLike, getLikedStories };
