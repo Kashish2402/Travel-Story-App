@@ -1,17 +1,20 @@
 import React, { useEffect, useState } from "react";
 import Navbar from "../../components/Navbar";
 import { useDispatch, useSelector } from "react-redux";
+import Modal from "react-modal";
 import { Dot, Edit, X } from "lucide-react";
 import { formatDateOfBirth } from "../../utils/formatDate";
 import { getUserStories } from "../../features/travelStorySlice";
 import { getLikedStories } from "../../features/likeSlice";
 import UserPosts from "../../components/UserPosts";
 import LikePosts from "../../components/LikePosts";
+import EditProfilCard from "../../components/Cards/EditProfilCard";
 
 function Profile() {
   const [tab, setTab] = useState("your-posts");
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const { authUser } = useSelector((state) => state.auth);
- 
+
   const { yourStories } = useSelector((state) => state.story);
   const { likedStories } = useSelector((state) => state.like);
 
@@ -21,11 +24,9 @@ function Profile() {
     dispatch(getUserStories());
   }, [dispatch]);
 
-  useEffect(()=>{
-    dispatch(getLikedStories())
-  },[dispatch])
-
- 
+  useEffect(() => {
+    dispatch(getLikedStories());
+  }, [dispatch]);
 
   const handleEdit = () => {
     setIsModalOpen(!isModalOpen);
@@ -132,7 +133,8 @@ function Profile() {
         </div>
       </div>
 
-      
+      {isModalOpen && <EditProfilCard authUser={authUser} closeModal={handleEdit}/>
+       }
     </div>
   );
 }

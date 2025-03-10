@@ -68,6 +68,21 @@ export const changePassword = createAsyncThunk(
   }
 );
 
+export const editUserDetails=createAsyncThunk("/users/editUserDetails",async(formData,{rejectWithValue})=>{
+  try {
+    const response=await axiosInstance.patch("/users/edit-user-details",formData)
+
+    toast.success(response.data.message)
+
+    return response.data.data
+  } catch (error) {
+    console.log(error.response?.data?.message || "Unable to edit Details");
+      return rejectWithValue(
+        error.response?.data?.message || "Unable to edit Details"
+      );
+  }
+})
+
 export const logout = createAsyncThunk(
   "auth/logout",
   async (_, { rejectWithValue }) => {
@@ -92,6 +107,7 @@ export const authSlice = createSlice({
     isAuthenticated: false,
     isSigningUp: false,
     isLoggingIn: false,
+    isUpdatingUserDetails:false,
     error: null,
   },
   extraReducers: (builder) => {
@@ -142,6 +158,14 @@ export const authSlice = createSlice({
       .addCase(login.rejected, (state, action) => {
         state.isLoggingIn = false;
         state.error = action.payload;
+      }).addCase(editUserDetails.pending,(state)=>{
+        state.error=null,
+        state.isUpdatingUserDetails=true
+      }).addCase(editUserDetails.fulfilled,(state,action)=>{
+        state.isUpdatingUserDetails=false
+      }).addCase(editUserDetails.rejected,(state,action)=>{
+        state.error=action.payload;
+        state.isUpdatingUserDetails=false
       })
       .addCase(logout.pending, (state) => {
         state.error = null;

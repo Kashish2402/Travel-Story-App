@@ -133,7 +133,7 @@ const changeUserDetails = asyncHandler(async (req, res, next) => {
     return next(
       new ApiError("FullName or age or gender required to update details!!!")
     );
-
+    console.log(req?.user)
   const user = await User.findByIdAndUpdate(
     req.user?._id,
     {
@@ -146,7 +146,7 @@ const changeUserDetails = asyncHandler(async (req, res, next) => {
     {
       new: true,
     }
-  ).select("-password , -refreshToken");
+  ).select("-password -refreshToken");
 
   if (!user)
     return next(
@@ -156,7 +156,7 @@ const changeUserDetails = asyncHandler(async (req, res, next) => {
       )
     );
 
-  return res.status(200, User, "User Account Details Updated Successfully..");
+  return res.status(200).json(new ApiResponse(200, User, "User Account Details Updated Successfully.."));
 });
 
 const updateAvatarImage = asyncHandler(async (req, res, next) => {
@@ -312,9 +312,11 @@ const refreshAccessToken = asyncHandler(async (req, res, next) => {
 });
 
 const getCurrentUser = asyncHandler(async (req, res, next) => {
+
+  const user=await User.findById(req.user).select("-password")
   return res
     .status(200)
-    .json(new ApiResponse(200, req.user, "User Fetched Successfully!! "));
+    .json(new ApiResponse(200, user, "User Fetched Successfully!! "));
 });
 
 export {
