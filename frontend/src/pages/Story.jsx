@@ -51,7 +51,7 @@ function Story() {
 
         {/* USER DETAILS */}
 
-        <div className="md:w-[70%] w-full  mx-auto bg-gray-600/20 p-3 flex gap-3 items-center">
+        <div className="md:w-[70%] w-full  mx-auto bg-gray-600/80 backdrop-blur-2xl rounded-3xl p-3 flex gap-3 items-center -mt-26">
           <div className="w-14 h-14 rounded-full overflow-hidden">
             {storyDetails[0]?.user?.profilePic ? (
               <img src={storyDetails[0]?.user?.profilePic} />
@@ -69,7 +69,7 @@ function Story() {
 
         {/* STORY DETAILS */}
 
-        <div className="md:w-[70%] w-full  mx-auto bg-gray-600/20 px-5 py-8 flex flex-col items-center gap-8">
+        <div className="md:w-[70%] w-full  mx-auto bg-gray-600/20 px-5 py-8 flex flex-col rounded-3xl items-center gap-8 ">
           <div className="w-full flex gap-3 items-center flex-wrap">
             {storyDetails[0]?.visitedLocations.map((location) => (
               <div
