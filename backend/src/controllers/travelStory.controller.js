@@ -97,7 +97,7 @@ const getAllStories = asyncHandler(async (req, res, next) => {
         updatedAt: 1,
         user: {
           username: "$story_user_details.username",
-          profilePic: "$story_user_details.profilePic.url",
+          profilePic: "$story_user_details.profilePic",
         },
         likesCount: 1,
         isLiked:1
@@ -138,7 +138,7 @@ const getUserStories = asyncHandler(async (req, res, next) => {
         updatedAt: 1,
         user: {
           username: "$user.username",
-          profilePic: "$user.profilePic.url",
+          profilePic: "$user.profilePic",
         },
       },
     },

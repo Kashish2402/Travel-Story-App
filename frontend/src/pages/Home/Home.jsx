@@ -17,7 +17,7 @@ function Home() {
     dispatch(fetchStories());
   }, [dispatch]);
 
-  // console.log(stories);
+  console.log(stories);
   return (
   
       <div className="w-full flex flex-col items-center gap-10 mb-3 relative">

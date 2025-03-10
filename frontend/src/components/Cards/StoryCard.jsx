@@ -31,6 +31,7 @@ function StoryCard({
   const menuRef = useRef(null);
   const dispatch = useDispatch();
 
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (menuRef.current && !menuRef.current.contains(event.target)) {

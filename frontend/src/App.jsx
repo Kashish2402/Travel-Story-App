@@ -10,6 +10,8 @@ import CreateStory from "./pages/CreateStory";
 import Login from "./components/Login";
 import Story from "./pages/Story";
 import Profile from "./pages/Profile/Profile";
+import { fetchStories } from "./features/travelStorySlice";
+import { getLikedStories } from "./features/likeSlice";
 
 function App() {
   const { authUser } = useSelector((state) => state.auth);
@@ -17,6 +19,14 @@ function App() {
   useEffect(() => {
     dispatch(getUser());
   }, [dispatch]);
+
+  useEffect(()=>{
+    dispatch(fetchStories())
+  },[dispatch])
+
+  useEffect(()=>{
+    dispatch(getLikedStories())
+  },[dispatch])
 
   return (
     <>
