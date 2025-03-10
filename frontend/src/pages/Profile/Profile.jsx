@@ -2,23 +2,61 @@ import React, { useEffect, useState } from "react";
 import Navbar from "../../components/Navbar";
 import { useDispatch, useSelector } from "react-redux";
 import Modal from "react-modal";
-import { Dot, Edit, X } from "lucide-react";
+import { Dot, Edit, Loader2Icon, X } from "lucide-react";
 import { formatDateOfBirth } from "../../utils/formatDate";
 import { getUserStories } from "../../features/travelStorySlice";
 import { getLikedStories } from "../../features/likeSlice";
 import UserPosts from "../../components/UserPosts";
 import LikePosts from "../../components/LikePosts";
 import EditProfilCard from "../../components/Cards/EditProfilCard";
+import { updateAvatarImage, updateCoverImage } from "../../features/authSlice";
 
 function Profile() {
   const [tab, setTab] = useState("your-posts");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { authUser } = useSelector((state) => state.auth);
+  const { authUser, isUpdatingImage } = useSelector((state) => state.auth);
+
+  useEffect(() => {
+    if (authUser) {
+      setCover(authUser.coverImage);
+      setAvatar(authUser?.profilePic);
+    }
+  });
+
+  const [cover, setCover] = useState(authUser?.coverImage || "/OIP.jpeg");
+
+  const [avatar, setAvatar] = useState(authUser?.profilePic);
 
   const { yourStories } = useSelector((state) => state.story);
   const { likedStories } = useSelector((state) => state.like);
 
   const dispatch = useDispatch();
+
+  const handleCoverChange = (e) => {
+    const file = e.target.files[0];
+
+    if (file) {
+      const imageUrl = URL.createObjectURL(file);
+      setCover(imageUrl);
+      const data = new FormData();
+      data.append("coverImagelocalPath", file);
+
+      dispatch(updateCoverImage(data));
+    }
+  };
+
+  const handleAvatarChange = (e) => {
+    const file = e.target.files[0];
+
+    if (file) {
+      const imageUrl = URL.createObjectURL(file);
+      setAvatar(imageUrl);
+      const data = new FormData();
+      data.append("avatarImage", file);
+
+      dispatch(updateAvatarImage(data));
+    }
+  };
 
   useEffect(() => {
     dispatch(getUserStories());
@@ -36,23 +74,49 @@ function Profile() {
       <Navbar />
       <div className="w-[70%] mx-auto flex flex-col items-center justify-center pt-26">
         <div className="relative w-full h-full mb-24">
-          <div className="w-full h-56 shadow-2xl">
-            <img
-              src={authUser?.coverImage || "/OIP.jpeg"}
-              alt="Cover"
-              className="w-full h-full object-center object-cover"
-            />
+          <div className="w-full h-56 shadow-2xl relative">
+            {
+              <label className="absolute inset-0 cursor-pointer">
+                <img
+                  src={cover}
+                  alt="Cover"
+                  className="w-full h-full object-center object-cover"
+                />
+
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleCoverChange}
+                />
+              </label>
+            }
           </div>
 
-          <div className="h-44 w-44 bg-blue-700 rounded-full absolute -bottom-20 left-1/2 -translate-x-1/2 flex items-center justify-center">
-            {authUser?.profilePic ? (
-              <img
-                src={authUser?.profilePic}
-                className="w-full h-full object-cover object-center"
-              />
+          <div className="h-44 w-44 bg-blue-700 rounded-full absolute -bottom-20 left-1/2 -translate-x-1/2 flex items-center justify-center overflow-hidden">
+            {!isUpdatingImage ? (
+              <label htmlFor="avatarImage" className="cursor-pointer">
+                {authUser?.profilePic ? (
+                  <img
+                    src={avatar}
+                    className="w-full h-full object-cover object-center"
+                  />
+                ) : (
+                  <div className="text-6xl font-bold text-white/70">
+                    {authUser?.username.charAt(0).toUpperCase()}
+                  </div>
+                )}
+                <input
+                  type="file"
+                  id="avatarImage"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleAvatarChange}
+                />
+              </label>
             ) : (
-              <div className="text-6xl font-bold text-white/70">
-                {authUser?.username.charAt(0).toUpperCase()}
+              <div className="h-full w-full flex items-center justify-center">
+                <Loader2Icon size={20}/>
               </div>
             )}
           </div>
@@ -133,8 +197,9 @@ function Profile() {
         </div>
       </div>
 
-      {isModalOpen && <EditProfilCard authUser={authUser} closeModal={handleEdit}/>
-       }
+      {isModalOpen && (
+        <EditProfilCard authUser={authUser} closeModal={handleEdit} />
+      )}
     </div>
   );
 }
