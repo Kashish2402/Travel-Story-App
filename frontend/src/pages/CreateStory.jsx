@@ -71,7 +71,7 @@ function CreateStory() {
     <div>
       <Navbar />
       <div className="w-full h-[85vh] flex items-center justify-between">
-        <div className="w-full md:w-[80%] mx-auto border p-6 rounded-2xl border-gray-600 drop-shadow-lg bg-gray-500/10 flex flex-col gap-6">
+        <div className="w-full md:w-[80%] mx-auto border p-6 rounded-2xl border-gray-600 drop-shadow-lg bg-gray-500/10 flex flex-col gap-6 mt-60">
           <div className="w-full text-center">
             <h1 className="text-3xl text-white/50 font-bold mb-2">
               Create your own travel story
