@@ -13,7 +13,7 @@ const addStory = asyncHandler(async (req, res, next) => {
   if (!title || !description || !visitedLocations || !imageUrl || !visitedDate)
     return next(new ApiError(400, "Fields Required"));
 
-  const newVisitedDate = new Date(parseInt(visitedDate));
+  const newVisitedDate = new Date(visitedDate);
 
   const image = await uploadOnCloudinary(imageUrl);
 
@@ -27,7 +27,7 @@ const addStory = asyncHandler(async (req, res, next) => {
 
   if (typeof visitedLocations === "string") {
     try {
-      visitedLocations = JSON.parse(visitedLocations); // Convert string to array
+      visitedLocations = JSON.parse(visitedLocations);
     } catch (error) {
       return next(new ApiError(400, "Invalid visitedLocations format"));
     }
@@ -190,7 +190,7 @@ const editStory = asyncHandler(async (req, res, next) => {
   if (title) updateFields.title = title;
   if (description) updateFields.description = description;
   if (visitedLocations) updateFields.visitedLocations = visitedLocations;
-  if (visitedDate) updateFields.visitedDate = new Date(parseInt(visitedDate));
+  if (visitedDate) updateFields.visitedDate = new Date(visitedDate);
 
   if (imageUrl) {
     const image = await uploadOnCloudinary(imageUrl);
