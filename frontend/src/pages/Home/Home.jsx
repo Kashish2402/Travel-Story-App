@@ -44,6 +44,7 @@ function Home() {
                   updatedAt={story.UpdatedAt}
                   image={story.imageUrl ? story.imageUrl : "./OIP.jpeg"}
                   isLiked={story.isLiked}
+                  story={story}
                 />
               ))}
             </div>

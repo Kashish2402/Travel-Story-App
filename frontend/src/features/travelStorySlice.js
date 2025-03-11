@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { axiosInstance } from "../lib/axios";
 import toast from "react-hot-toast";
 
+
 export const fetchStories = createAsyncThunk(
   "story/fetchStories",
   async (_, { rejectWithValue }) => {
@@ -48,6 +49,18 @@ export const addStory = createAsyncThunk(
   }
 );
 
+export const updateStory=createAsyncThunk("story/updateStory",async(formData,storyId,{rejectWithValue})=>{
+  try {
+    const response=await axiosInstance.patch(`/travelStory/update-story/${postId}`,formData)
+
+    toast.success(response.data.message)
+    return response.data.data
+  } catch (error) {
+    console.log(response.data.message);
+      return rejectWithValue(response.data.message || "Unable to edit Story")
+  }
+})
+
 export const StorySlice = createSlice({
   name: "story",
   initialState: {
@@ -92,6 +105,12 @@ export const StorySlice = createSlice({
       }).addCase(getUserStories.rejected,(state,action)=>{
         state.error=action.payload
         state.isStoriesFetching=false
+      }).addCase(updateStory.pending,(state)=>{
+        state.error=null
+      }).addCase(updateStory.fulfilled,(state,action)=>{
+
+      }).addCase(updateStory.rejected,(state,action)=>{
+        state.error=action.payload
       });
   },
 });

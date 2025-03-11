@@ -19,15 +19,15 @@ function StoryCard({
   createdAt,
   updatedAt,
   likes,
-  isLiked
+  isLiked,
+  story
 }) {
   const { authUser } = useSelector((state) => state.auth);
-  const { likedStories } = useSelector((state) => state.like);
+  const {stories}=useSelector(state=>state.story)
   const navigate = useNavigate();
   const [totalLikes, setTotalLikes] = useState(likes);
-  const [liked, setLiked] = useState(isLiked);
   const [showMenu, setShowMenu] = useState(false);
-
+  const [liked,setLiked]=useState(isLiked)
   const menuRef = useRef(null);
   const dispatch = useDispatch();
 
@@ -44,28 +44,17 @@ function StoryCard({
     };
   }, []);
 
-  useEffect(() => {
-    dispatch(getLikedStories());
-  }, [dispatch]);
-
-  useEffect(() => {
-    if (likedStories.length > 0) {
-      const isLiked = likedStories.some((story) => story._id === id);
-      setLiked(isLiked);
-    }
-  }, [likedStories, id]);
-
- 
-
   const handleLikeButon = async (id) => {
     try {
       const response = await dispatch(toggleLike(id)).unwrap();
-      setLiked(response.isLiked);
+     setLiked(response.isLiked)
       setTotalLikes(response.totalLikes);
     } catch (error) {
       console.error("Like toggle failed:", error);
     }
   };
+
+  
   return (
     <div
       className={` p-3 rounded-xl border-1 border-gray-500/10 flex flex-col items-center justify-between gap-4 bg-gray-700/20 drop-shadow-md relative z-20 ${className}`}
@@ -99,11 +88,6 @@ function StoryCard({
               >
                 View Story
               </h1>
-              {authUser.username === username && (
-                <h1 className="py-2 w-full text-center cursor-pointer hover:bg-slate-800/50 rounded-xl">
-                  Edit Story
-                </h1>
-              )}
               {authUser.username === username && (
                 <h1 className="py-2 w-full text-center cursor-pointer hover:bg-slate-800/50 rounded-xl">
                   Delete Story
