@@ -1,169 +1,177 @@
-import React, { useEffect, useState } from "react";
 import { X } from "lucide-react";
+import React, { useState } from "react";
+import { formatInputDate } from "../utils/formatDate";
 
 function EditStory({ closeModal, story, handleUpdate }) {
+  const [loc, setLoc] = useState("");
+  const [imagePreview, setImagePreview] = useState(story.imageUrl);
   const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-    visitedLocations: [],
-    visitedDate: "",
-    imageUrl: null,
+    title: story.title,
+    description: story.description,
+    visitedLocations: story.visitedLocations,
+    visitedDate: formatInputDate(story.visitedDate),
+    imageUrl: story.imageUrl,
   });
 
-  useEffect(() => {
-    if (story) {
-      setFormData({
-        title: story?.title,
-        description: story?.description,
-        visitedLocations: story?.visitedLocations,
-        visitedDate: "story?.visitedDate",
-        imageUrl: story?.imageUrl,
-      });
+  const deleteLocation = (index) => {
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      visitedLocations: prevFormData.visitedLocations.filter(
+        (_, i) => i !== index
+      ),
+    }));
+  };
+
+  const addLocation = (e) => {
+    if (loc.trim()) {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        visitedLocations: [...prevFormData.visitedLocations, loc.trim()],
+      }));
     }
-  },[story]);
 
-  const [location, setLocation] = useState("");
-  const [previewImage, setPreviewImage] = useState("");
+    setLoc("");
+  };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+  const removeImage = () => {
+    setImagePreview(null);
   };
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
+    console.log("File: ", file);
+    
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreviewImage(reader.result);
-        setFormData({ ...formData, imageUrl: file });
-      };
-      reader.readAsDataURL(file);
+      const image = URL.createObjectURL(file);
+      setImagePreview(image);
+      setFormData({ ...formData, imageUrl: image });
     }
-  };
-
-  const addLocation = () => {
-    if (location.trim()) {
-      setFormData((prev) => ({
-        ...prev,
-        visitedLocations: [...prev.visitedLocations, location.trim()],
-      }));
-      setLocation("");
-    }
-  };
-
-  const deleteLocation = (index) => {
-    setFormData((prev) => ({
-      ...prev,
-      visitedLocations: prev.visitedLocations.filter((_, i) => i !== index),
-    }));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    handleUpdate(formData,story?._id);
+    console.log("Story Id: ",story._id)
+    handleUpdate(story._id, formData);
   };
-
   return (
-    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-[333]">
-      <div className="w-[500px] bg-gray-900/70 backdrop-blur drop-shadow-lg p-6 rounded-lg">
-        <div className="flex justify-between items-center">
-          <h2 className="text-white/70 text-lg">Edit Your Travel Story</h2>
-          <button
-            className="text-white/70 text-lg cursor-pointer"
-            onClick={closeModal}
-          >
+    <div className="h-full w-full fixed inset-0 bg-black/80 backdrop-blur-sm/30 z-99 flex items-center justify-center">
+      <div className="w-[500px] bg-gray-800/50 p-6 rounded-xl flex flex-col drop-shadow-2xl overflow-y-scroll mt-5">
+        <div className="flex items-center justify-between">
+          <h2 className="text-xl text-white/60">Edit Story</h2>
+
+          <button className="text-xl text-white/70" onClick={closeModal}>
             <X />
           </button>
         </div>
 
-        <form className="mt-4 flex flex-col gap-3" onSubmit={handleSubmit}>
-          <input
-            type="text"
-            name="title"
-            value={formData.title}
-            onChange={handleChange}
-            className="w-full p-2 rounded bg-gray-800 text-white"
-            placeholder="Title"
-          />
+        <div className="border mt-2 border-gray-700/50"></div>
 
-          <textarea
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-            rows={8}
-            className="w-full p-2 rounded bg-gray-800 text-white"
-            placeholder="Description"
-          />
+        <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+          <fieldset className="border border-white/30 rounded-2xl py-1">
+            <legend className="mx-3 text-white/60 text-[15px]">Title</legend>
+            <input
+              type="text"
+              value={formData.title}
+              onChange={(e) =>
+                setFormData({ ...formData, title: e.target.value })
+              }
+              className="overflow-hidden w-full bg-transparent border-none outline-none px-3 pb-1 text-white/50"
+              placeholder="Title..."
+            />
+          </fieldset>
 
-          <fieldset className="w-full border border-white/30 rounded-2xl py-1">
+          <fieldset className="border border-white/30 rounded-2xl py-1">
+            <legend className="mx-3 text-white/60 text-[15px]">
+              Description
+            </legend>
+            <textarea
+              type="text"
+              rows={7}
+              value={formData.description}
+              onChange={(e) =>
+                setFormData({ ...formData, description: e.target.value })
+              }
+              className="overflow-hidden w-full bg-transparent border-none outline-none px-3 pb-1 text-white/50"
+              placeholder="description..."
+            />
+          </fieldset>
+
+          <fieldset className="border border-white/30 rounded-2xl py-1 relative">
             <legend className="mx-3 text-white/60 text-[15px]">
               Visited Locations
             </legend>
             {formData.visitedLocations.length > 0 && (
-              <div className="flex flex-wrap gap-2 p-2">
-                {formData.visitedLocations.map((loc, index) => (
-                  <div
-                    key={index}
-                    className="bg-gray-700 p-2 rounded-lg flex items-center gap-2 text-white"
-                  >
-                    {loc}
-                    <button
-                      type="button"
-                      onClick={() => deleteLocation(index)}
-                      className="text-red-400"
+              <div className="h-[4vh] flex items-center flex-wrap overflow-scroll">
+                {formData.visitedLocations.map((location, index) => {
+                  return (
+                    <div
+                      key={index}
+                      className="w-fit p-2 mx-2 bg-gray-500/50 text-white/80 flex items-center gap-2 rounded-xl text-sm"
                     >
-                      <X size={12} />
-                    </button>
-                  </div>
-                ))}
+                      {location}
+                      <button type="button" onClick={() => deleteLocation(index)}>
+                        <X />
+                      </button>
+                    </div>
+                  );
+                })}
               </div>
             )}
-            <div className="flex gap-2 p-2">
-              <input
-                type="text"
-                value={location}
-                onChange={(e) => setLocation(e.target.value)}
-                className="w-full bg-transparent border-none outline-none px-3 text-white"
-                placeholder="Add a location..."
-              />
-              <button
-                type="button"
-                onClick={addLocation}
-                className="bg-blue-600 px-3 py-2 rounded-lg text-white"
-              >
-                Add
-              </button>
-            </div>
+            <input
+              type="text"
+              value={loc}
+              onChange={(e) => setLoc(e.target.value)}
+              className="overflow-hidden w-full bg-transparent border-none outline-none px-3 pt-6 pb-1 text-white/50"
+            />
+            <button
+            type="button"
+              onClick={()=>addLocation()}
+              className="absolute right-3 bottom-2 bg-blue-700 text-white/70 p-2 px-4 rounded cursor-pointer"
+            >
+              Add
+            </button>
           </fieldset>
 
-          <input
-            type="date"
-            name="visitedDate"
-            value={formData.visitedDate}
-            onChange={handleChange}
-            className="w-full p-2 rounded bg-gray-800 text-white"
-          />
-
-          {previewImage && (
-            <img
-              src={previewImage}
-              alt="Preview"
-              className="w-full h-40 object-cover rounded"
+          <fieldset className="w-full border border-white/30 rounded-2xl py-1">
+            <legend className="mx-3 text-white/60 text-[15px]">
+              Visited Date
+            </legend>
+            <input
+              type="date"
+              className="overflow-hidden w-full bg-transparent border-none outline-none px-3 pb-1 text-white/50"
+              value={formData.visitedDate}
+              onChange={(e) =>
+                setFormData({ ...formData, visitedDate: e.target.value })
+              }
             />
-          )}
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleImageChange}
-            className="w-full p-2 rounded bg-gray-800 text-white"
-          />
+          </fieldset>
 
-          <button
-            type="submit"
-            className="w-full p-2 rounded bg-blue-600 text-white hover:bg-blue-700"
-          >
-            Update Story
+          {imagePreview && (
+            <div className="flex items-center text-white/70 gap-5 relative w-fit">
+              Preview
+              <div className="h-12 w-12 rounded-xl overflow-hidden">
+                <img
+                  src={formData.imageUrl}
+                  className="h-full w-full object-cover object-center"
+                />
+              </div>
+              <button className="absolute -top-2 -right-1 bg-gray-500 rounded-full">
+                <X size={15} onClick={removeImage} />
+              </button>
+            </div>
+          )}
+          <fieldset className="w-full border border-white/30 rounded-2xl py-1">
+            <legend className="mx-3 text-white/60 text-[15px]">Image</legend>
+            <input
+              type="file"
+              className="overflow-hidden w-full bg-transparent border-none outline-none px-3 pb-1 text-white/50"
+              onChange={handleImageChange}
+              accept="image/*"
+            />
+          </fieldset>
+
+          <button type="submit" className="bg-blue-700 p-2 text-white/80">
+            Save Changes
           </button>
         </form>
       </div>

@@ -23,11 +23,12 @@ export const formatDateOfBirth=(date)=>{
 export const formatInputDate=(date)=>{
     if(!date) return ""
 
-    return new Date(date).toLocaleDateString({
-        day:"numeric",
-        month:"numeric",
-        year:"numeric",
-    })
+    const d=new Date(date);
+    const year=d.getFullYear()
+    const month=String(d.getMonth()+1).padStart(2,'0')
+    const day=String(d.getDate()).padStart(2,'0')
+
+    return `${year}-${month}-${day}`
 }
 
 

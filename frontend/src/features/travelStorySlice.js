@@ -49,11 +49,13 @@ export const addStory = createAsyncThunk(
   }
 );
 
-export const updateStory=createAsyncThunk("story/updateStory",async(formData,storyId,{rejectWithValue})=>{
+export const updateStory=createAsyncThunk("story/updateStory",async({formData,storyId},{rejectWithValue})=>{
   try {
-    const response=await axiosInstance.patch(`/travelStory/update-story/${postId}`,formData)
+    console.log("In Update Story")
+    const response=await axiosInstance.patch(`/travelStory/update-story/${storyId}`,formData)
 
     toast.success(response.data.message)
+    console.log(response.data.data)
     return response.data.data
   } catch (error) {
     console.log(response.data.message);
@@ -108,7 +110,13 @@ export const StorySlice = createSlice({
       }).addCase(updateStory.pending,(state)=>{
         state.error=null
       }).addCase(updateStory.fulfilled,(state,action)=>{
+        const updatedStoryIndex = state.stories.findIndex(
+          (story) => story._id === action.payload._id
+        );
 
+        if (updatedStoryIndex !== -1) {
+          state.stories[updatedStoryIndex] = action.payload;
+        }
       }).addCase(updateStory.rejected,(state,action)=>{
         state.error=action.payload
       });

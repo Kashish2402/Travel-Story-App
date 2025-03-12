@@ -2,12 +2,12 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchStories } from "../features/travelStorySlice";
+import { fetchStories, updateStory } from "../features/travelStorySlice";
 import { formatDate, formatDateOfBirth } from "../utils/formatDate";
 import { toggleLike } from "../features/likeSlice";
 import { BiLike, BiSolidLike } from "react-icons/bi";
 import { LoaderCircleIcon } from "lucide-react";
-import EditStory from "../components/EditStory"
+import EditStory from "../components/EditStory";
 
 function Story() {
   const { id } = useParams();
@@ -18,7 +18,7 @@ function Story() {
   const [storyDetails, setStoryDetails] = useState([]);
   const [liked, setLiked] = useState(false);
   const [totalLikes, setTotalLikes] = useState(0);
-  const [modal,setModal]=useState(false)
+  const [modal, setModal] = useState(false);
 
   useEffect(() => {
     dispatch(fetchStories()).then(() => setLoading(false));
@@ -39,7 +39,9 @@ function Story() {
 
   const handleLike = async () => {
     try {
-      const response = await dispatch(toggleLike(storyDetails[0]?._id)).unwrap();
+      const response = await dispatch(
+        toggleLike(storyDetails[0]?._id)
+      ).unwrap();
       setLiked(response.isLiked);
       setTotalLikes(response.totalLikes);
     } catch (error) {
@@ -47,13 +49,39 @@ function Story() {
     }
   };
 
-  const handleEdit=()=>{
-    setModal(!modal)
-  }
+  const handleEdit = () => {
+    setModal(!modal);
+  };
 
-  const updateStory=(data,id)=>{}
+  const editStory = (id,formData) => {
+    console.log("In edit story function FormData ",formData)
+    console.log("In edit story function storyID ",id)
+    const formDataToSend = new FormData();
+    formDataToSend.append("title", formData.title);
+    formDataToSend.append("description", formData.description);
+    formDataToSend.append(
+      "visitedLocations",
+      JSON.stringify(formData.visitedLocations)
+    );
+    formDataToSend.append("visitedDate", formData.visitedDate);
+
+    if (formData.imageUrl) {
+      if (typeof formData.imageUrl === "string") {
+        formDataToSend.append("imageUrl", formData.imageUrl);
+      } else {
+        formDataToSend.append("imageUrl", formData.imageUrl);
+      }
+    }
+
+    dispatch(updateStory({formData:formDataToSend, storyId:id}))
+     
+  };
   if (loading) {
-    return <div className="w-full h-full flex items-center justify-center"><LoaderCircleIcon size={30}/></div>;
+    return (
+      <div className="w-full h-full flex items-center justify-center">
+        <LoaderCircleIcon size={30} />
+      </div>
+    );
   }
 
   return (
@@ -71,25 +99,35 @@ function Story() {
           </div>
           {/* USER DETAILS */}
           <div className="md:w-[70%] w-full mx-auto bg-gray-600/80 backdrop-blur-2xl rounded-3xl p-3 flex gap-3 items-center -mt-26">
-
-          <div className="w-full flex items-center justify-between">
-            <div className="flex items-center gap-3">
-            <div className="w-14 h-14 rounded-full overflow-hidden">
-              {storyDetails[0]?.user?.profilePic ? (
-                <img src={storyDetails[0]?.user?.profilePic} alt="profile" />
-              ) : (
-                <div className="w-full h-full bg-blue-700 flex items-center justify-center text-white">
-                  {storyDetails[0]?.user?.username?.charAt(0)?.toUpperCase()}
+            <div className="w-full flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-14 h-14 rounded-full overflow-hidden">
+                  {storyDetails[0]?.user?.profilePic ? (
+                    <img
+                      src={storyDetails[0]?.user?.profilePic}
+                      alt="profile"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-blue-700 flex items-center justify-center text-white">
+                      {storyDetails[0]?.user?.username
+                        ?.charAt(0)
+                        ?.toUpperCase()}
+                    </div>
+                  )}
                 </div>
-              )}
+                <div>
+                  <h1 className="text-white">
+                    {storyDetails[0]?.user?.username}
+                  </h1>
+                </div>
+              </div>
+              <button
+                className="bg-blue-700 text-white px-4 py-2 rounded-xl text-sm cursor-pointer"
+                onClick={handleEdit}
+              >
+                Edit Story
+              </button>
             </div>
-            <div>
-              <h1 className="text-white">{storyDetails[0]?.user?.username}</h1>
-            </div>
-            </div>
-              <button className="bg-blue-700 text-white p-2 rounded-xl text-sm cursor-pointer" onClick={handleEdit}>Edit Story</button>
-          </div>
-            
           </div>
           {/* STORY DETAILS */}
           <div className="md:w-[70%] w-full mx-auto bg-gray-600/20 px-5 py-8 flex flex-col rounded-3xl items-center gap-8 ">
@@ -151,7 +189,13 @@ function Story() {
         </div>
       )}
 
-      {modal && <EditStory story={storyDetails[0]} closeModal={handleEdit} handleUpdate={updateStory}/>}
+      {modal && (
+        <EditStory
+          story={storyDetails[0]}
+          closeModal={handleEdit}
+          handleUpdate={editStory}
+        />
+      )}
     </div>
   );
 }
