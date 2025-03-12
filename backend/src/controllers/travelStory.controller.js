@@ -182,18 +182,25 @@ const getUserStories = asyncHandler(async (req, res, next) => {
 
 const editStory = asyncHandler(async (req, res, next) => {
   const { postId } = req.params;
-  const { title, description, visitedLocations, imageUrl, visitedDate } =
+  const { title, description, visitedLocations, visitedDate } =
     req.body;
-
+  
   let updateFields = {};
 
   if (title) updateFields.title = title;
   if (description) updateFields.description = description;
-  if (visitedLocations) updateFields.visitedLocations = visitedLocations;
+  if (visitedLocations) {
+    try {
+      updateFields.visitedLocations = JSON.parse(visitedLocations); 
+    } catch (error) {
+      return next(new ApiError(400, "Invalid visitedLocations format. Must be a valid JSON array."));
+    }
+  }
   if (visitedDate) updateFields.visitedDate = new Date(visitedDate);
 
-  if (imageUrl) {
-    const image = await uploadOnCloudinary(imageUrl);
+  if (req.file) {
+    const imageUrl=req.file
+    const image = await uploadOnCloudinary(imageUrl.path);
     if (!image)
       return next(
         new ApiError(

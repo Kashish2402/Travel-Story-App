@@ -44,7 +44,7 @@ function EditStory({ closeModal, story, handleUpdate }) {
     if (file) {
       const image = URL.createObjectURL(file);
       setImagePreview(image);
-      setFormData({ ...formData, imageUrl: image });
+      setFormData({ ...formData, imageUrl: file });
     }
   };
 
