@@ -41,7 +41,7 @@ function Home() {
                   likes={story.likesCount}
                   visitedLocations={story.visitedLocations || []}
                   visitedDate={story.visitedDate}
-                  updatedAt={story.UpdatedAt}
+                  updatedAt={story.updatedAt}
                   image={story.imageUrl ? story.imageUrl : "./OIP.jpeg"}
                   isLiked={story.isLiked}
                   story={story}

@@ -23,6 +23,8 @@ function StoryCard({
   isLiked,
   story
 }) {
+
+  
   const { authUser } = useSelector((state) => state.auth);
   const {stories}=useSelector(state=>state.story)
   const navigate = useNavigate();
@@ -144,7 +146,7 @@ function StoryCard({
             </button>
             <span className="w-2">{totalLikes}</span>
           </div>
-          <p className="text-sm text-gray-400/50">
+          <p className="text-[14px] text-gray-400/50">
             {!updatedAt
               ? ` ${formatDate(createdAt)}`
               : `Last Updated on ${formatDate(updatedAt)}`}
