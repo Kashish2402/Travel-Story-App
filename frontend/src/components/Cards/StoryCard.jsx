@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { formatDate } from "../../utils/formatDate";
 import { getLikedStories, toggleLike } from "../../features/likeSlice";
+import { deleteStory } from "../../features/travelStorySlice";
 
 function StoryCard({
   id,
@@ -89,7 +90,7 @@ function StoryCard({
                 View Story
               </h1>
               {authUser.username === username && (
-                <h1 className="py-2 w-full text-center cursor-pointer hover:bg-slate-800/50 rounded-xl">
+                <h1 className="py-2 w-full text-center cursor-pointer hover:bg-slate-800/50 rounded-xl" onClick={()=>dispatch(deleteStory(id))}>
                   Delete Story
                 </h1>
               )}

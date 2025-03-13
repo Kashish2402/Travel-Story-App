@@ -25,18 +25,25 @@ const addStory = asyncHandler(async (req, res, next) => {
       )
     );
 
-  if (typeof visitedLocations === "string") {
-    try {
-      visitedLocations = JSON.parse(visitedLocations);
-    } catch (error) {
-      return next(new ApiError(400, "Invalid visitedLocations format"));
+    let parsedVisitedLocations;
+    if (typeof visitedLocations === "string") {
+      try {
+        parsedVisitedLocations = JSON.parse(visitedLocations);
+      } catch (error) {
+        return next(new ApiError(400, "Invalid visitedLocations JSON format."));
+      }
+    } else {
+      parsedVisitedLocations = visitedLocations;
     }
-  }
+  
+    if (!Array.isArray(parsedVisitedLocations)) {
+      return next(new ApiError(400, "visitedLocations must be an array."));
+    }
 
   const travelStory = await Story.create({
     title,
     description,
-    visitedLocations,
+    visitedLocations:parsedVisitedLocations,
     visitedDate: newVisitedDate,
     imageUrl: image.url,
     userId: req.user?._id,

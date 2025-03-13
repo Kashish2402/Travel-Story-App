@@ -13,6 +13,7 @@ function Story() {
   const { id } = useParams();
   const dispatch = useDispatch();
   const { stories } = useSelector((state) => state.story);
+  const {authUser}=useSelector(state=>state.auth)
 
   const [loading, setLoading] = useState(true);
   const [storyDetails, setStoryDetails] = useState([]);
@@ -121,12 +122,12 @@ function Story() {
                   </h1>
                 </div>
               </div>
-              <button
+              {authUser.username===storyDetails[0]?.user?.username && <button
                 className="bg-blue-700 text-white px-4 py-2 rounded-xl text-sm cursor-pointer"
                 onClick={handleEdit}
               >
                 Edit Story
-              </button>
+              </button>}
             </div>
           </div>
           {/* STORY DETAILS */}

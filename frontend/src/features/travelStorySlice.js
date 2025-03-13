@@ -51,15 +51,25 @@ export const addStory = createAsyncThunk(
 
 export const updateStory=createAsyncThunk("story/updateStory",async({formData,storyId},{rejectWithValue})=>{
   try {
-    console.log("In Update Story")
     const response=await axiosInstance.patch(`/travelStory/update-story/${storyId}`,formData)
 
     toast.success(response.data.message)
-    console.log(response.data.data)
+
     return response.data.data
   } catch (error) {
     console.log(response.data.message);
       return rejectWithValue(response.data.message || "Unable to edit Story")
+  }
+})
+
+export const deleteStory=createAsyncThunk('story/deleteStory',async(storyId,{rejectWithValue})=>{
+  try {
+    const response=await axiosInstance.delete(`/travelStory/delete/${storyId}`)
+    toast.success(response.data.message)
+    return response.data.data
+  } catch (error) {
+    console.log(response.data.message);
+      return rejectWithValue(response.data.message || "Unable to delete Story")
   }
 })
 
@@ -118,6 +128,12 @@ export const StorySlice = createSlice({
           state.stories[updatedStoryIndex] = action.payload;
         }
       }).addCase(updateStory.rejected,(state,action)=>{
+        state.error=action.payload
+      }).addCase(deleteStory.pending,(state)=>{
+        state.error=null
+      }).addCase(deleteStory.fulfilled,(state,action)=>{
+        state.stories=state.stories.filter((story)=>story._id!==action.meta.arg)
+      }).addCase(deleteStory.rejected,(state,action)=>{
         state.error=action.payload
       });
   },
