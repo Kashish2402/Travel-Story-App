@@ -2,9 +2,11 @@ import { X } from "lucide-react";
 import React, { useState } from "react";
 import { formatInputDate } from "../utils/formatDate";
 
+
 function EditStory({ closeModal, story, handleUpdate }) {
   const [loc, setLoc] = useState("");
   const [imagePreview, setImagePreview] = useState(story.imageUrl);
+  
   const [formData, setFormData] = useState({
     title: story.title,
     description: story.description,
@@ -52,6 +54,7 @@ function EditStory({ closeModal, story, handleUpdate }) {
     e.preventDefault();
     console.log("Story Id: ",story._id)
     handleUpdate(story._id, formData);
+    closeModal()
   };
   return (
     <div className="h-full w-full fixed inset-0 bg-black/80 backdrop-blur-sm/30 z-99 flex items-center justify-center">
@@ -170,7 +173,7 @@ function EditStory({ closeModal, story, handleUpdate }) {
             />
           </fieldset>
 
-          <button type="submit" className="bg-blue-700 p-2 text-white/80">
+          <button type="submit" className="bg-blue-700 cursor-pointer p-2 text-white/80">
             Save Changes
           </button>
         </form>
