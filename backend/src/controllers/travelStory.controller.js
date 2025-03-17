@@ -25,25 +25,25 @@ const addStory = asyncHandler(async (req, res, next) => {
       )
     );
 
-    let parsedVisitedLocations;
-    if (typeof visitedLocations === "string") {
-      try {
-        parsedVisitedLocations = JSON.parse(visitedLocations);
-      } catch (error) {
-        return next(new ApiError(400, "Invalid visitedLocations JSON format."));
-      }
-    } else {
-      parsedVisitedLocations = visitedLocations;
+  let parsedVisitedLocations;
+  if (typeof visitedLocations === "string") {
+    try {
+      parsedVisitedLocations = JSON.parse(visitedLocations);
+    } catch (error) {
+      return next(new ApiError(400, "Invalid visitedLocations JSON format."));
     }
-  
-    if (!Array.isArray(parsedVisitedLocations)) {
-      return next(new ApiError(400, "visitedLocations must be an array."));
-    }
+  } else {
+    parsedVisitedLocations = visitedLocations;
+  }
+
+  if (!Array.isArray(parsedVisitedLocations)) {
+    return next(new ApiError(400, "visitedLocations must be an array."));
+  }
 
   const travelStory = await Story.create({
     title,
     description,
-    visitedLocations:parsedVisitedLocations,
+    visitedLocations: parsedVisitedLocations,
     visitedDate: newVisitedDate,
     imageUrl: image.url,
     userId: req.user?._id,
@@ -88,7 +88,7 @@ const getAllStories = asyncHandler(async (req, res, next) => {
           $size: "$stories_likes",
         },
         isLiked: {
-          $in: [req.user?._id , "$stories_likes.userId"],
+          $in: [req.user?._id, "$stories_likes.userId"],
         },
       },
     },
@@ -107,7 +107,7 @@ const getAllStories = asyncHandler(async (req, res, next) => {
           profilePic: "$story_user_details.profilePic",
         },
         likesCount: 1,
-        isLiked:1
+        isLiked: 1,
       },
     },
   ]);
@@ -175,7 +175,6 @@ const getUserStories = asyncHandler(async (req, res, next) => {
     {
       $project: {
         liked_stories: 0,
-        
       },
     },
   ]);
@@ -189,24 +188,28 @@ const getUserStories = asyncHandler(async (req, res, next) => {
 
 const editStory = asyncHandler(async (req, res, next) => {
   const { postId } = req.params;
-  const { title, description, visitedLocations, visitedDate } =
-    req.body;
-  
+  const { title, description, visitedLocations, visitedDate } = req.body;
+
   let updateFields = {};
 
   if (title) updateFields.title = title;
   if (description) updateFields.description = description;
   if (visitedLocations) {
     try {
-      updateFields.visitedLocations = JSON.parse(visitedLocations); 
+      updateFields.visitedLocations = JSON.parse(visitedLocations);
     } catch (error) {
-      return next(new ApiError(400, "Invalid visitedLocations format. Must be a valid JSON array."));
+      return next(
+        new ApiError(
+          400,
+          "Invalid visitedLocations format. Must be a valid JSON array."
+        )
+      );
     }
   }
   if (visitedDate) updateFields.visitedDate = new Date(visitedDate);
 
   if (req.file) {
-    const imageUrl=req.file
+    const imageUrl = req.file;
     const image = await uploadOnCloudinary(imageUrl.path);
     if (!image)
       return next(
@@ -272,36 +275,28 @@ const updateIsFavourite = asyncHandler(async (req, res, next) => {
 });
 
 const searchStory = asyncHandler(async (req, res, next) => {
-  const { query } = req.query;
+  const { query } = req?.query;
 
-  if (!query) return next(new ApiError(404, "Query Required"));
+  if (!query) return next(new ApiError(400, "Query is required"));
 
-  const searchResult = await Story.find({
-    userId: req.user?._id,
-    $or: [
-      {
-        title: { $regex: query, $options: "i" },
-      },
-      {
-        description: { $regex: query, $options: "i" },
-      },
-      {
-        visitedLocations: { $regex: query, $options: "i" },
-      },
-    ],
-  }).sort({ isFavourite: -1 });
+  const searchFields = ["title", "description", "visitedLocations"];
 
-  if (!searchResult)
-    return next(new ApiError(404, "Unable to find your intrest"));
+  const searchConditions = searchFields.map((field) => ({
+    [field]: { $regex: query, $options: "i" },
+  }));
+
+  const searchResult = await Story.find(
+    { userId: req.user?._id, $or: searchConditions },
+    "title description visitedLocations createdAt isFavourite"
+  ).sort({ isFavourite: -1 });
+
+  if (!searchResult.length)
+    return next(new ApiError(404, "No matching stories found"));
 
   return res
     .status(200)
     .json(
-      new ApiResponse(
-        200,
-        searchResult,
-        "Serch Results fetched successfully..."
-      )
+      new ApiResponse(200, searchResult, "Search results fetched successfully")
     );
 });
 

@@ -40,8 +40,6 @@ function ProfileInfo() {
         )}
       </p>
 
-      
-
       {showMenu && (
         <div
           className="absolute -bottom-24 left-0 text-white/60 rounded-xl px-4 bg-gray-600 p-2 flex flex-col divide-y z-99 divide-gray-800"
@@ -63,7 +61,9 @@ function ProfileInfo() {
 
       <div className="flex items-center gap-4 text-white/60">
         <p className="text-sm font-medium">
-          {authUser?.fullName.slice(0, 5) + "..."}
+          {!authUser?.fullName.lenght >= 5
+            ? authUser?.fullName
+            : authUser?.fullName.slice(0, 5) + "..."}
         </p>
         <button className="cursor-pointer" onClick={handleLogout}>
           Logout
