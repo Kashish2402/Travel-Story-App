@@ -26,6 +26,7 @@ function ProfileInfo() {
   const handleLogout = (e) => {
     e.preventDefault();
     dispatch(logout());
+    navigate('/login')
   };
   return (
     <div className="flex items-center gap-2 relative">
