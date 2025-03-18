@@ -48,3 +48,10 @@ Contributions are welcome! Please open an issue or submit a pull request.
 
 ## License
 This project is licensed under the MIT License.
+
+## Deployment Troubleshooting
+If you encounter issues while deploying the application, consider the following steps:
+1. Ensure that the directory structure is correct and that all necessary files, including `package.json` for both the backend and frontend, are present in the repository.
+2. Check for any errors in the deployment logs and address them accordingly.
+3. Make sure that environment variables are set correctly, especially for database connections and API keys.
+4. If using a service like Render, ensure that the build commands are correctly specified in the service's settings.
