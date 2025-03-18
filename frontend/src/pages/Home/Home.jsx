@@ -24,7 +24,7 @@ function Home() {
     <div className="w-full flex flex-col items-center gap-10 mb-3 relative">
       <Navbar />
 
-      <div className="w-[80%] flex flex-col items-center justify-center gap-10 pt-36 ">
+      <div className="w-[80%] flex flex-col items-center justify-center gap-10 mt-66 md:mt-36 ">
         <div className="w-full flex items-center justify-between ">
           <h1 className=" w-full text-center text-white/80 text-3xl font-bold mb-5 italic font-[lobster two] ">
             Recent Posts
