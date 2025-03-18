@@ -10,7 +10,7 @@ const _dirname = path.resolve();
 
 app.use(
   cors({
-    origin: process.env.CORS_ORIGIN,
+    origin: "*",
     credentials: true,
   })
 );
