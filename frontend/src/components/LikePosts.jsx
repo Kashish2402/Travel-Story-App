@@ -2,10 +2,10 @@ import React from "react";
 import StoryCard from "./Cards/StoryCard";
 import { useSelector } from "react-redux";
 
-function LikePosts() {
+function LikePosts({className=""}) {
   const { likedStories } = useSelector((state) => state.like);
   return (
-    <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-x-40 gap-y-6 mt-10">
+    <div className={`w-full grid grid-cols-1 lg:grid-cols-2 gap-x-40 gap-y-6 mt-10`}>
       {likedStories.map((story) => (
         <StoryCard
           key={story._id}

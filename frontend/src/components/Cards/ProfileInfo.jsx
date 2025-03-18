@@ -54,7 +54,10 @@ function ProfileInfo() {
           >
             View Profile
           </h1>
-          <h1 className="py-1 hover:bg-gray-700 cursor-pointer px-1 rounded-2xl mb-1">
+          <h1 className="py-1 hover:bg-gray-700 cursor-pointer px-1 rounded-2xl mb-1"
+          onClick={() =>
+            navigate(`/${authUser.username}/likedStories`)
+          }>
             Liked Posts
           </h1>
         </div>

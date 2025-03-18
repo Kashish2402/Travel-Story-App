@@ -12,6 +12,7 @@ import Story from "./pages/Story";
 import Profile from "./pages/Profile/Profile";
 import { fetchStories } from "./features/travelStorySlice";
 import { getLikedStories } from "./features/likeSlice";
+import LikePage from "./pages/LikePage";
 
 function App() {
   const { authUser } = useSelector((state) => state.auth);
@@ -20,13 +21,13 @@ function App() {
     dispatch(getUser());
   }, [dispatch]);
 
-  useEffect(()=>{
-    dispatch(fetchStories())
-  },[dispatch])
+  useEffect(() => {
+    dispatch(fetchStories());
+  }, [dispatch]);
 
-  useEffect(()=>{
-    dispatch(getLikedStories())
-  },[dispatch])
+  useEffect(() => {
+    dispatch(getLikedStories());
+  }, [dispatch]);
 
   return (
     <>
@@ -41,10 +42,17 @@ function App() {
           <Route path="/change-password" element={<ChangePassword />}></Route>
           <Route
             path="/create-story"
-            element={authUser ? <CreateStory />:<Auth auth="login"/>}
+            element={authUser ? <CreateStory /> : <Auth auth="login" />}
           ></Route>
-          <Route path="/story/:id" element={<Story/>}></Route>
-          <Route path="/profile/:authUser/:id" element={<Profile/>}></Route>
+          <Route path="/story/:id" element={<Story />}></Route>
+          <Route
+            path="/profile/:authUser/:id"
+            element={authUser ? <Profile /> : <Auth auth="login" />}
+          ></Route>
+          <Route
+            path="/:authUser/likedStories"
+            element={authUser ? <LikePage /> : <Auth auth="login" />}
+          ></Route>
         </Routes>
       </Router>
       <Toaster reverseOrder={false} />
