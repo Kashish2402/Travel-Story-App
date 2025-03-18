@@ -4,7 +4,9 @@
   "main": "src/index.js",
   "type": "module",
   "scripts": {
-    "dev": "nodemon src/index.js"
+    "dev": "nodemon src/index.js",
+    "build": "echo 'No build step for backend'",
+    "start": "node src/index.js"
   },
   "author": "",
   "license": "ISC",
