@@ -303,9 +303,19 @@ const searchStory = asyncHandler(async (req, res, next) => {
 const filterStories = asyncHandler(async (req, res, next) => {
   const { startDate, endDate } = req.query;
 
-  const start = new Date(parseInt(startDate));
-  const end = new Date(parseInt(endDate));
+  if (!startDate || !endDate) {
+    return next(new ApiError(400, "Start date and end date are required!"));
+  }
 
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+
+  if (isNaN(start) || isNaN(end)) {
+    return next(new ApiError(400, "Invalid date format!"));
+  }
+
+  end.setHours(23, 59, 59, 999);
+  
   const filteredStories = await Story.find({
     userId: req.user?._id,
     visitedDate: { $gte: start, $lte: end },

@@ -54,6 +54,8 @@ export const searchStories = createAsyncThunk(
   }
 );
 
+
+
 export const addStory = createAsyncThunk(
   "story/addStory",
   async (formData, { rejectWithValue }) => {
@@ -66,7 +68,9 @@ export const addStory = createAsyncThunk(
       return response.data.data;
     } catch (error) {
       console.log(error.response.data.message);
-      return rejectWithValue(error.response.data.message || "Unable to add Story");
+      return rejectWithValue(
+        error.response.data.message || "Unable to add Story"
+      );
     }
   }
 );
@@ -85,7 +89,9 @@ export const updateStory = createAsyncThunk(
       return response.data.data;
     } catch (error) {
       console.log(error.response.data.message);
-      return rejectWithValue(error.response.data.message || "Unable to edit Story");
+      return rejectWithValue(
+        error.response.data.message || "Unable to edit Story"
+      );
     }
   }
 );
@@ -101,7 +107,9 @@ export const deleteStory = createAsyncThunk(
       return response.data.data;
     } catch (error) {
       console.log(error.response.data.message);
-      return rejectWithValue(error.response.data.message || "Unable to delete Story");
+      return rejectWithValue(
+        error.response.data.message || "Unable to delete Story"
+      );
     }
   }
 );
