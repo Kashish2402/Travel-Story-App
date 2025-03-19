@@ -55,8 +55,8 @@ function Story() {
   };
 
   const editStory = (id,formData) => {
-    console.log("In edit story function FormData ",formData)
-    console.log("In edit story function storyID ",id)
+    // console.log("In edit story function FormData ",formData)
+    // console.log("In edit story function storyID ",id)
     const formDataToSend = new FormData();
     formDataToSend.append("title", formData.title);
     formDataToSend.append("description", formData.description);

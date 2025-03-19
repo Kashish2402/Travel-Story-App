@@ -13,12 +13,12 @@ function EditProfilCard({ authUser,closeModal }) {
   });
 
   const dispatch=useDispatch()
-  console.log(authUser)
+  // console.log(authUser)
 
   const handleSubmit=(e)=>{
     e.preventDefault()
-    console.log("Save Changes button clicked")
-    console.log(formData)
+    // console.log("Save Changes button clicked")
+    // console.log(formData)
     dispatch(editUserDetails(formData))
     closeModal()
   }

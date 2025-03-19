@@ -9,7 +9,7 @@ export const fetchStories = createAsyncThunk(
       const response = await axiosInstance("/travelStory/fetch-all-stories");
       return response.data.data;
     } catch (error) {
-      console.log(error.response.data.message);
+      // console.log(error.response.data.message);
       return rejectWithValue(
         error.response.data.message || "Unable to fetch Stories"
       );
@@ -27,7 +27,7 @@ export const getUserStories = createAsyncThunk(
       toast.success(response.data.message);
       return response.data.data;
     } catch (error) {
-      console.log(error.response.data.message);
+      // console.log(error.response.data.message);
       return rejectWithValue(
         error.response.data.message || "Unable to fetch Stories"
       );
@@ -43,7 +43,7 @@ export const searchStories = createAsyncThunk(
         params: { query },
       });
 
-      console.log(response.data.data);
+      // console.log(response.data.data);
 
       return Array.isArray(response.data.data) ? response.data.data : [];
     } catch (error) {
@@ -67,7 +67,7 @@ export const addStory = createAsyncThunk(
       toast.success(response.data.message);
       return response.data.data;
     } catch (error) {
-      console.log(error.response.data.message);
+      // console.log(error.response.data.message);
       return rejectWithValue(
         error.response.data.message || "Unable to add Story"
       );
@@ -88,7 +88,7 @@ export const updateStory = createAsyncThunk(
 
       return response.data.data;
     } catch (error) {
-      console.log(error.response.data.message);
+      // console.log(error.response.data.message);
       return rejectWithValue(
         error.response.data.message || "Unable to edit Story"
       );
@@ -106,7 +106,7 @@ export const deleteStory = createAsyncThunk(
       toast.success(response.data.message);
       return response.data.data;
     } catch (error) {
-      console.log(error.response.data.message);
+      // console.log(error.response.data.message);
       return rejectWithValue(
         error.response.data.message || "Unable to delete Story"
       );

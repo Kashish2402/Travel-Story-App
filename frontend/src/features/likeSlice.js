@@ -7,7 +7,7 @@ export const getLikedStories=createAsyncThunk("like/getLikedStories",async(_,{re
     const response=await axiosInstance.get("/likes/get-liked-stories")
     return response.data.data
   } catch (error) {
-    console.log(response.data.message);
+    // console.log(response.data.message);
       return rejectWithValue(
         response.data.message || "Error getting liked videos.."
       );
@@ -21,7 +21,7 @@ export const toggleLike = createAsyncThunk(
       const response = await axiosInstance.post(`/likes/like/${storyId}`);
       return response.data.data;
     } catch (error) {
-      console.log(response.data.message);
+      // console.log(response.data.message);
       return rejectWithValue(
         response.data.message || "Error toggling like"
       );

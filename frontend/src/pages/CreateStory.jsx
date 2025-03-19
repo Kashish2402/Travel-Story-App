@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { RxCross2 } from "react-icons/rx";
 import { useDispatch } from "react-redux";
@@ -13,7 +14,8 @@ function CreateStory() {
     imageUrl: null,
   });
 
-  const dispatch=useDispatch()
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
   const [location, setLocation] = useState("");
 
   const addLocation = () => {
@@ -46,7 +48,7 @@ function CreateStory() {
   };
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Data from form data: ", formData);
+    // console.log("Data from form data: ", formData);
     const newFormData = new FormData();
     newFormData.append("title", formData.title);
     newFormData.append("description", formData.description);
@@ -65,6 +67,8 @@ function CreateStory() {
       visitedDate: "",
       imageUrl: null,
     })
+    navigate('/dashboard')
+
   };
 
   return (

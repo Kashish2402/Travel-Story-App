@@ -24,7 +24,7 @@ export const signUp = createAsyncThunk(
       toast.success(response.data.message);
       return response.data.data;
     } catch (error) {
-      console.log(error.response?.data?.message || "Unable to register User");
+      // console.log(error.response?.data?.message || "Unable to register User");
       return rejectWithValue(
         error.response?.data?.message || "Unable to register User"
       );
@@ -40,7 +40,7 @@ export const login = createAsyncThunk(
       toast.success(response.data.message);
       return response.data.data.user;
     } catch (error) {
-      console.log(error.response?.data?.message || "Unable to login User");
+      // console.log(error.response?.data?.message || "Unable to login User");
       return rejectWithValue(
         error.response?.data?.message || "Unable to login User"
       );
@@ -60,7 +60,7 @@ export const changePassword = createAsyncThunk(
       toast.success(response.data.message);
       return response.data.data;
     } catch (error) {
-      console.log(error.response?.data?.message || "Unable to change password");
+      // console.log(error.response?.data?.message || "Unable to change password");
       return rejectWithValue(
         error.response?.data?.message || "Unable to change password"
       );
@@ -81,7 +81,7 @@ export const editUserDetails = createAsyncThunk(
 
       return response.data.data;
     } catch (error) {
-      console.log(error.response?.data?.message || "Unable to edit Details");
+      // console.log(error.response?.data?.message || "Unable to edit Details");
       return rejectWithValue(
         error.response?.data?.message || "Unable to edit Details"
       );
@@ -101,9 +101,9 @@ export const updateCoverImage = createAsyncThunk(
       toast.success(response.data.message);
       return response.data.data;
     } catch (error) {
-      console.log(
-        error.response?.data?.message || "Unable to update cover Image"
-      );
+      // console.log(
+      //   error.response?.data?.message || "Unable to update cover Image"
+      // );
       return rejectWithValue(
         error.response?.data?.message || "Unable to update cover Image"
       );
@@ -123,9 +123,9 @@ export const updateAvatarImage = createAsyncThunk(
       toast.success(response.data.message);
       return response.data.data;
     } catch (error) {
-      console.log(
-        error.response?.data?.message || "Unable to update avatar Image"
-      );
+      // console.log(
+      //   error.response?.data?.message || "Unable to update avatar Image"
+      // );
       return rejectWithValue(
         error.response?.data?.message || "Unable to update avatar Image"
       );
@@ -142,7 +142,7 @@ export const logout = createAsyncThunk(
       toast.success(response.data.message);
       return response.data.data;
     } catch (error) {
-      console.log(error.response?.data?.message || "Unable to logout User");
+      // console.log(error.response?.data?.message || "Unable to logout User");
       return rejectWithValue(
         error.response?.data?.message || "Unable to logout User"
       );
