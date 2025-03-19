@@ -34,7 +34,7 @@ Travel Story App is a web application that allows users to share and explore tra
    ```
 
 ## Usage
-- Access the frontend application at `http://localhost:3000` (or the port specified by Vite).
+- Access the frontend application at `http://localhost:5173` (or the port specified by Vite).
 - The backend API can be accessed at `http://localhost:5000` (or the port specified in your backend configuration).
 
 ## Features
@@ -45,6 +45,8 @@ Travel Story App is a web application that allows users to share and explore tra
 
 ## Contributing
 Contributions are welcome! Please open an issue or submit a pull request.
+
+Link- https://travel-story-app-t1sb.onrender.com/dashboard
 
 ## License
 This project is licensed under the MIT License.
