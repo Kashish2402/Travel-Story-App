@@ -9,7 +9,7 @@ function Auth({ auth }) {
       <div
         className={`auth h-[80%] w-[min(80%,1280px)] mx-auto flex items-center justify-center shadow-[0px 0px 5px 2px black] rounded-[50px] overflow-hidden relative`}
         style={{
-          backgroundImage: "url(./Login-Background image.jpg)",
+          backgroundImage: "url('./Login-Background-image.jpg')",
           boxShadow: "0px 0px 15px -5px black",
           backdropFilter: "opacity(10%)",
         }}
