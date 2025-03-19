@@ -17,7 +17,7 @@ app.use(
 
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ extended: true, limit: "50mb" }));
-app.use(express.static("public"));
+// app.use(express.static("public"));
 app.use(cookieParser());
 
 // ROUTES
@@ -31,6 +31,7 @@ app.use("/api/v1/travelStory", storyRoutes);
 app.use("/api/v1/likes", likeRoutes);
 
 app.use(express.static(path.join(_dirname, "/frontend/dist")));
+app.use("/static", express.static(path.join(_dirname, "public")));
 
 app.get("*", (_, res) => {
   res.sendFile(path.resolve(_dirname, "frontend", "dist", "index.html"));
