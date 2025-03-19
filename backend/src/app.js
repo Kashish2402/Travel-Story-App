@@ -30,7 +30,7 @@ app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/travelStory", storyRoutes);
 app.use("/api/v1/likes", likeRoutes);
 
-const tempDir = path.join(process.cwd(), "backend/src/public/temp"); 
+const tempDir = path.join(process.cwd(), "public/temp"); 
 if (!fs.existsSync(tempDir)) {
   fs.mkdirSync(tempDir, { recursive: true });
 }
