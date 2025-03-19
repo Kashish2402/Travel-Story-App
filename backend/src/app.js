@@ -3,7 +3,7 @@ import { errorHandler } from "./middlewares/errorHandler.middleware.js";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import path from "path";
-
+import fs from "fs"
 const app = express();
 
 const _dirname = path.resolve();
@@ -30,6 +30,10 @@ app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/travelStory", storyRoutes);
 app.use("/api/v1/likes", likeRoutes);
 
+const tempDir = path.join(process.cwd(), "backend/src/public/temp"); 
+if (!fs.existsSync(tempDir)) {
+  fs.mkdirSync(tempDir, { recursive: true });
+}
 app.use(express.static(path.join(_dirname, "/frontend/dist")));
 app.use("/static", express.static(path.join(_dirname, "public")));
 
