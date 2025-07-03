@@ -12,14 +12,30 @@ import {
 } from "../controllers/user.controllers.js";
 import { verifyJWT } from "../middlewares/authentication.middleware.js";
 import { upload } from "../middlewares/multer.middleware.js";
+import passport from "passport";
 
 const router = Router();
 
+// ROUTES FOR GOOGLE O AUTH
+router.route("/google").get(passport.authenticate("google", { scope: ["profile", "email"] }))
+
+router.route("/google/callback").get(passport.authenticate("google", {
+  failureRedirect: "/login",
+  session: false,
+}), (req, res) => {
+  const token = jwt.sign(
+    { id: req.user._id, name: req.user.name },
+    process.env.JWT_SECRET,
+    { expiresIn: "7d" }
+  );
+  res.redirect(`https://travel-story-app-t1sb.onrender.com/oauth-success?token=${token}`);
+})
+// ROUTES
 router.route("/signUp").post(signUp);
 router.route("/login").post(login);
 router.route("/logout").post(verifyJWT, logout);
 router.route("/get-current-user").get(verifyJWT, getCurrentUser);
-router.route("/edit-user-details").patch(verifyJWT,changeUserDetails)
+router.route("/edit-user-details").patch(verifyJWT, changeUserDetails)
 router
   .route("/update-profilePic")
   .patch(verifyJWT, upload.single("avatarImage"), updateAvatarImage);
