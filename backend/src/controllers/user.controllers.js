@@ -56,21 +56,31 @@ const signUp = asyncHandler(async (req, res, next) => {
     return next(
       new ApiError(500, "Something went wrong... Unable to create User!!!")
     );
+  const { accessToken, refreshToken } = await generateAccessAndRefreshToken(
+    user?._id
+  );
+
+  const options = {
+    httpOnly: true,
+    secure: true,
+  };
 
   return res
     .status(200)
+    .cookie("accessToken", accessToken, options)
+    .cookie("refreshToken", refreshToken, options)
     .json(
       new ApiResponse(200, createUser, "User Account Created Successfully...")
     );
 });
 
 const login = asyncHandler(async (req, res, next) => {
-  const {  email, password } = req.body;
+  const { email, password } = req.body;
 
   if (!email && !password)
     return next(new ApiError(400, "Credentials Required for login!!"));
 
-  const user = await User.findOne( { email } );
+  const user = await User.findOne({ email });
 
   if (!user) return next(new ApiError(404, "User Not Found!!"));
 
@@ -133,7 +143,7 @@ const changeUserDetails = asyncHandler(async (req, res, next) => {
     return next(
       new ApiError("FullName or age or gender required to update details!!!")
     );
-    console.log(req?.user)
+  console.log(req?.user)
   const user = await User.findByIdAndUpdate(
     req.user?._id,
     {
@@ -264,7 +274,7 @@ const changePassword = asyncHandler(async (req, res, next) => {
     }
   ).select("-passsword,-refreshToken");
 
-  res.status(200).json(new ApiResponse(200,updatedUser,"Password changed Successfully..."))
+  res.status(200).json(new ApiResponse(200, updatedUser, "Password changed Successfully..."))
 });
 
 const refreshAccessToken = asyncHandler(async (req, res, next) => {
@@ -313,11 +323,29 @@ const refreshAccessToken = asyncHandler(async (req, res, next) => {
 
 const getCurrentUser = asyncHandler(async (req, res, next) => {
 
-  const user=await User.findById(req.user).select("-password")
+  const user = await User.findById(req.user).select("-password")
   return res
     .status(200)
     .json(new ApiResponse(200, user, "User Fetched Successfully!! "));
 });
+
+const googleOAuth = asyncHandler(async (req, res, next) => {
+  const { accessToken, refreshToken } = await generateAccessAndRefreshToken(req.user?._id);
+
+  if (!accessToken & !refreshToken) return next(new ApiError(400, "Something went wrong while generating tokens"))
+
+  const options = {
+    httpOnly: true,
+    secure: true,
+  }
+  const user = await User.findById(req.user?._id)
+  if (!user) return next(new ApiError(404, "User Not found"))
+
+  res
+  .cookie("accessToken", accessToken, options)
+  .cookie("refreshToken", refreshToken, options)
+  .redirect("https://travel-story-app-t1sb.onrender.com/dashboard").json(new ApiResponse(200, { user, accessToken, refreshToken }, "User Logged in Successfully"))
+})
 
 export {
   signUp,
@@ -329,4 +357,5 @@ export {
   changePassword,
   refreshAccessToken,
   getCurrentUser,
+  googleOAuth
 };

@@ -13,7 +13,6 @@ import Profile from "./pages/Profile/Profile";
 import { fetchStories } from "./features/travelStorySlice";
 import { getLikedStories } from "./features/likeSlice";
 import LikePage from "./pages/LikePage";
-
 function App() {
   const { authUser } = useSelector((state) => state.auth);
   const dispatch = useDispatch();

@@ -8,7 +8,8 @@ import {
   signUp,
   updateCoverImage,
   updateAvatarImage,
-  changeUserDetails
+  changeUserDetails,
+  googleOAuth
 } from "../controllers/user.controllers.js";
 import { verifyJWT } from "../middlewares/authentication.middleware.js";
 import { upload } from "../middlewares/multer.middleware.js";
@@ -22,14 +23,8 @@ router.route("/google").get(passport.authenticate("google", { scope: ["profile",
 router.route("/google/callback").get(passport.authenticate("google", {
   failureRedirect: "/login",
   session: false,
-}), (req, res) => {
-  const token = jwt.sign(
-    { id: req.user._id, name: req.user.name },
-    process.env.JWT_SECRET,
-    { expiresIn: "7d" }
-  );
-  res.redirect(`https://travel-story-app-t1sb.onrender.com/oauth-success?token=${token}`);
-})
+}), googleOAuth
+)
 // ROUTES
 router.route("/signUp").post(signUp);
 router.route("/login").post(login);
