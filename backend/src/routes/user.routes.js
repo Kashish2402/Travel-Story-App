@@ -21,7 +21,7 @@ const router = Router();
 router.route("/google").get(passport.authenticate("google", { scope: ["profile", "email"] }))
 
 router.route("/google/callback").get(passport.authenticate("google", {
-  failureRedirect: "/login",
+  failureRedirect: "https://travel-story-app-t1sb.onrender.com//login",
   session: false,
 }), googleOAuth
 )

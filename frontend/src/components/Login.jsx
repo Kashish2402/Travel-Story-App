@@ -46,10 +46,10 @@ function Login() {
     }
   }
 
-const handleGoogleLogin = () => {
-  window.location.href = "https://travel-story-app-t1sb.onrender.com/api/v1/auth/google";
-};
 
+  const handleGoogleLogin = () => {
+    window.location.href = `${import.meta.env.VITE_BACKEND_URL}/users/google`
+  }
 
 
   return (
