@@ -337,6 +337,7 @@ const googleOAuth = asyncHandler(async (req, res, next) => {
   const options = {
     httpOnly: true,
     secure: true,
+    sameSite:"None"
   }
   const user = await User.findById(req.user?._id)
   if (!user) return next(new ApiError(404, "User Not found"))
@@ -344,7 +345,7 @@ const googleOAuth = asyncHandler(async (req, res, next) => {
   res
   .cookie("accessToken", accessToken, options)
   .cookie("refreshToken", refreshToken, options)
-  .redirect("https://travel-story-app-t1sb.onrender.com/dashboard").json(new ApiResponse(200, { user, accessToken, refreshToken }, "User Logged in Successfully"))
+  .redirect("https://travel-story-app-t1sb.onrender.com/dashboard")
 })
 
 export {
