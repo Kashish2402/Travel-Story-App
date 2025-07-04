@@ -93,17 +93,18 @@ function Profile() {
             }
           </div>
 
-          <div className="h-44 w-44 bg-blue-700 rounded-full absolute -bottom-20 left-1/2 -translate-x-1/2 flex items-center justify-center overflow-hidden">
+          <div className="absolute -bottom-20 left-1/2 -translate-x-1/2">
             {!isUpdatingImage ? (
-              <label htmlFor="avatarImage" className="cursor-pointer">
+              <label htmlFor="avatarImage" className="cursor-pointer block w-44 h-44 rounded-full overflow-hidden border-4 border-white shadow-md">
                 {authUser?.profilePic ? (
                   <img
                     src={avatar}
+                    alt="Profile"
                     className="w-full h-full object-cover object-center"
                   />
                 ) : (
-                  <div className="text-6xl font-bold text-white/70">
-                    {authUser?.username.charAt(0).toUpperCase()}
+                  <div className="w-full h-full bg-blue-700 flex items-center justify-center text-white text-4xl font-bold">
+                    {authUser?.username?.charAt(0).toUpperCase()}
                   </div>
                 )}
                 <input
@@ -115,11 +116,12 @@ function Profile() {
                 />
               </label>
             ) : (
-              <div className="h-full w-full flex items-center justify-center">
-                <Loader2Icon size={20}/>
+              <div className="w-44 h-44 flex items-center justify-center rounded-full bg-gray-500">
+                <Loader2Icon size={24} className="animate-spin text-white" />
               </div>
             )}
           </div>
+
         </div>
 
         <div className="flex items-center justify-center">
@@ -163,17 +165,15 @@ function Profile() {
         <div className="w-[90%] mt-10 mx-auto divide-y-2 divide-gray-500/50 gap-2">
           <div className="w-full flex text-white">
             <div
-              className={`w-1/2 text-center border-b-4  ${
-                tab === "your-posts" ? "border-gray-400" : "border-transparent"
-              } cursor-pointer`}
+              className={`w-1/2 text-center border-b-4  ${tab === "your-posts" ? "border-gray-400" : "border-transparent"
+                } cursor-pointer`}
               onClick={() => setTab("your-posts")}
             >
               Your Posts
             </div>
             <div
-              className={`w-1/2 text-center border-b-4 ${
-                tab === "liked-posts" ? "border-gray-400" : "border-transparent"
-              } cursor-pointer`}
+              className={`w-1/2 text-center border-b-4 ${tab === "liked-posts" ? "border-gray-400" : "border-transparent"
+                } cursor-pointer`}
               onClick={() => setTab("liked-posts")}
             >
               Liked Posts
