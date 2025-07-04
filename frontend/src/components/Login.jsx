@@ -48,7 +48,7 @@ function Login() {
 
 
   const handleGoogleLogin = () => {
-    window.location.href = `${import.meta.env.VITE_BACKEND_URL}/api/v1/users/google`
+    window.location.href = `${import.meta.env.VITE_BACKEND_URL}/auth/users/google`
   }
 
 
