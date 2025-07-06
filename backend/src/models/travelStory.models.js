@@ -11,7 +11,19 @@ const travelStorySchema = new Schema(
       type: String,
       required: true,
     },
-    visitedLocations: {
+    location: {
+      type: String,
+      required: true
+    },
+    coordinates: {
+      lat: {
+        type: Number
+      },
+      lng: {
+        type: Number
+      }
+    },
+    visitedPlaces: {
       type: [String],
       default: [],
     },
@@ -27,9 +39,9 @@ const travelStorySchema = new Schema(
       type: String,
       required: true,
     },
-    visitedDate:{
-        type:Date,
-        required:true
+    visitedDate: {
+      type: Date,
+      required: true
     }
   },
   {

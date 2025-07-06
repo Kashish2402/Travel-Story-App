@@ -6,11 +6,11 @@ import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import mongoose from "mongoose";
 
 const addStory = asyncHandler(async (req, res, next) => {
-  const { title, description, visitedLocations, visitedDate } = req.body;
+  const { title, description, location, coordinates,visitedLocations, visitedDate } = req.body;
 
   const imageUrl = req.file?.path;
 
-  if (!title || !description || !visitedLocations || !imageUrl || !visitedDate)
+  if (!title || !description || !visitedLocations || !imageUrl || !visitedDate ||!coordinates || !location)
     return next(new ApiError(400, "Fields Required"));
 
   const newVisitedDate = new Date(visitedDate);
@@ -43,6 +43,8 @@ const addStory = asyncHandler(async (req, res, next) => {
   const travelStory = await Story.create({
     title,
     description,
+    location,
+    coordinates,
     visitedLocations: parsedVisitedLocations,
     visitedDate: newVisitedDate,
     imageUrl: image.url,
@@ -188,12 +190,24 @@ const getUserStories = asyncHandler(async (req, res, next) => {
 
 const editStory = asyncHandler(async (req, res, next) => {
   const { postId } = req.params;
-  const { title, description, visitedLocations, visitedDate } = req.body;
+  const { title, description,location,coordinates, visitedLocations, visitedDate } = req.body;
 
   let updateFields = {};
 
   if (title) updateFields.title = title;
   if (description) updateFields.description = description;
+  if(location){
+   try {
+     updateFields.location=location;
+     updateFields.coordinates=coordinates;
+   } catch (error) {
+    return next(
+        new ApiError(
+          400,
+          "Invalid location, unable to detect coordinates"
+      )
+   }
+  }
   if (visitedLocations) {
     try {
       updateFields.visitedLocations = JSON.parse(visitedLocations);
