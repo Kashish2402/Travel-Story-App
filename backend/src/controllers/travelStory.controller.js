@@ -205,7 +205,7 @@ const editStory = asyncHandler(async (req, res, next) => {
         new ApiError(
           400,
           "Invalid location, unable to detect coordinates"
-      )
+      ))
    }
   }
   if (visitedLocations) {
