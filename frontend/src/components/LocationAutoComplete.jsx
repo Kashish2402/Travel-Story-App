@@ -43,7 +43,7 @@ function LocationAutoComplete({ onSelect }) {
 
         {
             suggestions.length > 0 && (
-                <ul className="absolute z-10 w-full bg-white border mt-1 rounded shadow-md text-white/70 bg-gray-500/20">
+                <ul className="absolute z-10 w-full border mt-1 rounded shadow-md text-white/70 bg-gray-500/20">
                     {
                         suggestions.map((place, index) => (
                             <li
