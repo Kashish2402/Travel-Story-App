@@ -11,23 +11,34 @@ passport.use(new GoogleStrategy({
 },
 
     async (accessToken, refreshToken, profile, done) => {
-        let user = await User.findOne({ googleId: profile.id })
+        try {
+            let user = await User.findOne({ email: profile.emails[0].value })
 
-        if (!user) {
-            user = await User.create({
-                googleId: profile.id,
-                fullName: profile.displayName,
-                email: profile.emails[0].value,
-                profilePic: profile.photos[0].value,
-                gender: "Not specified",
-                dateOfBirth: new Date("2000-01-01"),
-                password: Math.random().toString(36).slice(-8),
-                username: profile.displayName.toLowerCase().replace(/\s/g, "") + Date.now().toString().slice(-4),
-            })
+            if (!user) {
+                user = await User.create({
+                    googleId: profile.id,
+                    fullName: profile.displayName,
+                    email: profile.emails[0].value,
+                    profilePic: profile.photos[0].value,
+                    gender: "Not specified",
+                    dateOfBirth: new Date("2000-01-01"),
+                    password: Math.random().toString(36).slice(-8),
+                    username: profile.displayName.toLowerCase().replace(/\s/g, "") + Date.now().toString().slice(-4),
+                })
 
+            }
+            else {
+                if (!user.googleId) {
+                    user.googleId = profile.id;
+                    await user.save()
+                }
+            }
+
+            return done(null, user)
+        } catch (error) {
+            console.error("Error in Google OAuth strategy:", err);
+            return done(err, null);
         }
-
-        return done(null, user)
     }))
 
 passport.serializeUser((user, done) => {
