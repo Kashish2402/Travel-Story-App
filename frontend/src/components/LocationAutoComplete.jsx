@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import axios from 'axios'
 
 function LocationAutoComplete({ onSelect }) {
-    const [query, setQuery] = useState()
+    const [query, setQuery] = useState("")
     const [suggestions, setSuggestions] = useState([])
 
     const handleChange = async (e) => {
