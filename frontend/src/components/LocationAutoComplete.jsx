@@ -43,12 +43,12 @@ function LocationAutoComplete({ onSelect }) {
 
         {
             suggestions.length > 0 && (
-                <ul className="absolute z-10 w-full border mt-1 rounded shadow-md text-white/70 bg-gray-500/20">
+                <ul className="absolute z-10 w-full border mt-1 rounded shadow-md text-white/70 bg-gray-700">
                     {
                         suggestions.map((place, index) => (
                             <li
                                 key={index}
-                                className="px-3 py-2 hover:bg-gray-100 cursor-pointer"
+                                className="px-3 py-2 hover:bg-gray-300 hover:text-black cursor-pointer"
                                 onClick={() => handleSelect(place)}
                             >{place.properties.name}, {place.properties.city}, {place.properties.country}</li>
                         ))

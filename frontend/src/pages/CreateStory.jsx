@@ -4,9 +4,13 @@ import Navbar from "../components/Navbar";
 import { RxCross2 } from "react-icons/rx";
 import { useDispatch } from "react-redux";
 import { addStory } from "../features/travelStorySlice";
-import LocationAutocomplete from "../components/LocationAutoComplete"
+import LocationAutocomplete from "../components/LocationAutoComplete";
+import axios from "axios";
 
 function CreateStory() {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -17,9 +21,48 @@ function CreateStory() {
     imageUrl: null,
   });
 
-  const navigate = useNavigate()
-  const dispatch = useDispatch()
   const [location, setLocation] = useState("");
+  const [suggestedPlaces, setSuggestedPlaces] = useState([]);
+
+  const API_KEY = import.meta.env.VITE_OPENTRIPMAP_API_KEY;
+
+  // Fetch suggestions for visited places based on location input
+  const handleLocationChange = async (e) => {
+    const placeName = e.target.value;
+    setLocation(placeName);
+
+    if (placeName.trim() && formData.coordinates.lat && formData.coordinates.lng) {
+      try {
+        const res = await axios.get("https://api.opentripmap.com/0.1/en/places/radius", {
+          params: {
+            apikey: API_KEY,
+            radius: 20000,
+            lon: formData.coordinates.lng,
+            lat: formData.coordinates.lat,
+            format: "json",
+            limit: 20,
+          },
+        });
+
+        const matched = res.data
+          .filter((p) => p.name?.toLowerCase().includes(placeName.trim().toLowerCase()))
+          .slice(0, 6);
+
+        setSuggestedPlaces(matched);
+      } catch (err) {
+        console.error("Error fetching places:", err.message);
+      }
+    }
+  };
+
+  const handleSuggestionClick = (name) => {
+    setFormData((prev) => ({
+      ...prev,
+      visitedLocations: [...prev.visitedLocations, name],
+    }));
+    setLocation("");
+    setSuggestedPlaces([]);
+  };
 
   const addLocation = () => {
     if (location.trim()) {
@@ -34,9 +77,7 @@ function CreateStory() {
   const deleteLocation = (index) => {
     setFormData((prevFormData) => ({
       ...prevFormData,
-      visitedLocations: prevFormData.visitedLocations.filter(
-        (_, i) => i !== index
-      ),
+      visitedLocations: prevFormData.visitedLocations.filter((_, i) => i !== index),
     }));
   };
 
@@ -49,57 +90,55 @@ function CreateStory() {
       }));
     }
   };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    // console.log("Data from form data: ", formData);
+
     const newFormData = new FormData();
     newFormData.append("title", formData.title);
     newFormData.append("description", formData.description);
     newFormData.append("visitedDate", formData.visitedDate);
-    newFormData.append("location", formData.location)
-    newFormData.append("coordinates", formData.coordinates)
-    newFormData.append(
-      "visitedLocations",
-      JSON.stringify(formData.visitedLocations)
-    );
+    newFormData.append("location", formData.location);
+    newFormData.append("coordinates", JSON.stringify(formData.coordinates));
+    newFormData.append("visitedLocations", JSON.stringify(formData.visitedLocations));
     if (formData.imageUrl) newFormData.append("imageUrl", formData.imageUrl);
 
-    dispatch(addStory(newFormData))
+    dispatch(addStory(newFormData));
+
     setFormData({
       title: "",
       description: "",
       location: "",
-
+      coordinates: { lat: "", lng: "" },
       visitedLocations: [],
       visitedDate: "",
       imageUrl: null,
-    })
-    navigate('/dashboard')
+    });
 
+    navigate("/dashboard");
   };
 
   return (
     <div>
       <Navbar />
       <div className="w-full h-[85vh] flex items-center justify-between">
-        <div className="w-full md:w-[80%] mx-auto border p-6 rounded-2xl border-gray-600 drop-shadow-lg bg-gray-500/10 flex flex-col gap-6 mt-[500px] md:mt-60 ">
+        <div className="w-full md:w-[80%] mx-auto border p-6 rounded-2xl border-gray-600 drop-shadow-lg bg-gray-500/10 flex flex-col gap-6 mt-[500px] md:mt-60">
           <div className="w-full text-center">
             <h1 className="text-3xl text-white/50 font-bold mb-2">
               Create your own travel story
             </h1>
             <p className="text-gray-600 tracking-tighter italic text-sm">
-              Share your adventerous, exciting & loving travel story with people
-              across your world...
+              Share your adventurous, exciting & loving travel story with people across the world...
             </p>
           </div>
 
           <form className="w-full flex flex-col gap-8" onSubmit={handleSubmit}>
             <div className="w-full flex flex-col gap-3 md:flex-row md:divide-x md:divide-gray-500/40">
+              {/* Left section */}
               <div className="w-full flex flex-col gap-3 px-3 md:w-1/2">
+                {/* Title */}
                 <fieldset className="w-full border border-white/30 rounded-2xl py-1">
-                  <legend className="mx-3 text-white/60 text-[15px]">
-                    Title
-                  </legend>
+                  <legend className="mx-3 text-white/60 text-[15px]">Title</legend>
                   <input
                     type="text"
                     value={formData.title}
@@ -111,26 +150,25 @@ function CreateStory() {
                     required
                   />
                 </fieldset>
+
+                {/* Description */}
                 <fieldset className="w-full border border-white/30 rounded-2xl py-1">
-                  <legend className="mx-3 text-white/60 text-[15px]">
-                    Description
-                  </legend>
+                  <legend className="mx-3 text-white/60 text-[15px]">Description</legend>
                   <textarea
-                    type="text"
                     value={formData.description}
                     rows={8}
                     onChange={(e) =>
                       setFormData({ ...formData, description: e.target.value })
                     }
                     className="overflow-hidden w-full bg-transparent border-none outline-none px-3 pb-1 text-white/50"
-                    placeholder="I've gone to manali..."
+                    placeholder="I've gone to Manali..."
                     required
                   ></textarea>
                 </fieldset>
+
+                {/* Visited Date */}
                 <fieldset className="w-full border border-white/30 rounded-2xl py-1">
-                  <legend className="mx-3 text-white/60 text-[15px]">
-                    Visited Date
-                  </legend>
+                  <legend className="mx-3 text-white/60 text-[15px]">Visited Date</legend>
                   <input
                     type="date"
                     className="overflow-hidden w-full bg-transparent border-none outline-none px-3 pb-1 text-white/50"
@@ -141,8 +179,10 @@ function CreateStory() {
                   />
                 </fieldset>
               </div>
-              <div className="w-full h-full px-3 md:w-1/2 flex flex-col justify-center items-center gap-3">
 
+              {/* Right section */}
+              <div className="w-full h-full px-3 md:w-1/2 flex flex-col justify-center items-center gap-3">
+                {/* Main Location */}
                 <fieldset className="w-full border border-white/30 rounded-2xl py-1">
                   <legend className="mx-3 text-white/60 text-[15px]">Main Location</legend>
                   <LocationAutocomplete
@@ -156,58 +196,75 @@ function CreateStory() {
                   />
                 </fieldset>
 
+                {/* Coordinates Display */}
                 <fieldset className="w-full border border-white/30 rounded-2xl py-1">
                   <legend className="mx-3 text-white/60 text-[15px]">Coordinates</legend>
                   <input
                     type="text"
                     value={`Latitude: ${formData.coordinates.lat}, Longitude: ${formData.coordinates.lng}`}
                     className="overflow-hidden w-full bg-transparent border-none outline-none px-3 pb-1 text-white/50"
-                    placeholder="Visited Manali..."
-                    required
                     readOnly
+                    placeholder="Coordinates..."
+                    required
                   />
                 </fieldset>
 
+                {/* Visited Places with suggestions */}
+                <fieldset className="w-full border border-white/30 rounded-2xl py-1 relative">
+                  <legend className="mx-3 text-white/60 text-[15px]">Visited Places</legend>
 
-                <fieldset className="w-full border border-white/30 rounded-2xl py-1 relative ">
-                  <legend className="mx-3 text-white/60 text-[15px]">
-                    Visited Places
-                  </legend>
                   {formData.visitedLocations.length > 0 && (
                     <div className="h-[4vh] flex items-center flex-wrap overflow-scroll">
-                      {formData.visitedLocations.map((location, index) => {
-                        return (
-                          <div
-                            key={index}
-                            className="w-fit p-2 mx-2 bg-gray-500/50 text-white/80 flex items-center gap-2 rounded-xl text-sm"
-                          >
-                            {location}
-                            <button onClick={() => deleteLocation(index)}>
-                              <RxCross2 />
-                            </button>
-                          </div>
-                        );
-                      })}
+                      {formData.visitedLocations.map((location, index) => (
+                        <div
+                          key={index}
+                          className="w-fit p-2 mx-2 bg-gray-500/50 text-white/80 flex items-center gap-2 rounded-xl text-sm"
+                        >
+                          {location}
+                          <button onClick={() => deleteLocation(index)}>
+                            <RxCross2 />
+                          </button>
+                        </div>
+                      ))}
                     </div>
                   )}
+
                   <input
                     type="text"
                     value={location}
-                    onChange={(e) => setLocation(e.target.value)}
+                    onChange={handleLocationChange}
                     placeholder="Visited Locations..."
                     className="overflow-hidden w-full bg-transparent border-none outline-none px-3 py-2 text-white/50 relative"
                   />
+
+                  {/* Autocomplete suggestions */}
+                  {suggestedPlaces.length > 0 && (
+                    <ul className="absolute z-10 w-full border mt-1 rounded shadow-md text-white/70 bg-gray-700 max-h-40 overflow-auto">
+                      {suggestedPlaces.map((place) => (
+                        <li
+                          key={place.xid}
+                          className="px-3 py-2 hover:bg-gray-300 hover:text-black cursor-pointer"
+                          onClick={() => handleSuggestionClick(place.name)}
+                        >
+                          {place.name}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+
                   <button
                     type="button"
                     onClick={addLocation}
-                    className="absolute bottom-2 right-2 bg-blue-700 px-3 py-2 rounded-xl cursor-pointer text-white "
+                    className="absolute bottom-2 right-2 bg-blue-700 px-3 py-2 rounded-xl cursor-pointer text-white"
                     disabled={!location.trim()}
                   >
                     Add
                   </button>
                 </fieldset>
+
+                {/* File Upload */}
                 <div className="w-full mx-3 flex flex-col mt-3">
-                  <label htmlFor="file" className=" text-white/60 text-[15px]">
+                  <label htmlFor="file" className="text-white/60 text-[15px]">
                     Image
                     <br />
                     <input
