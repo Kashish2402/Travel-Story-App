@@ -4,11 +4,14 @@ import Navbar from "../components/Navbar";
 import { RxCross2 } from "react-icons/rx";
 import { useDispatch } from "react-redux";
 import { addStory } from "../features/travelStorySlice";
+import LocationAutocomplete from "../components/LocationAutoComplete"
 
 function CreateStory() {
   const [formData, setFormData] = useState({
     title: "",
     description: "",
+    location: "",
+    coordinates: { lat: "", lng: "" },
     visitedLocations: [],
     visitedDate: "",
     imageUrl: null,
@@ -53,6 +56,8 @@ function CreateStory() {
     newFormData.append("title", formData.title);
     newFormData.append("description", formData.description);
     newFormData.append("visitedDate", formData.visitedDate);
+    newFormData.append("location", formData.location)
+    newFormData.append("coordinates", formData.coordinates)
     newFormData.append(
       "visitedLocations",
       JSON.stringify(formData.visitedLocations)
@@ -63,6 +68,8 @@ function CreateStory() {
     setFormData({
       title: "",
       description: "",
+      location: "",
+
       visitedLocations: [],
       visitedDate: "",
       imageUrl: null,
@@ -135,9 +142,29 @@ function CreateStory() {
                     }
                   />
                 </fieldset>
+                <fieldset className="w-full border border-white/30 rounded-2xl py-1">
+                  <legend className="mx-3 text-white/60 text-[15px]">Main Location</legend>
+                  <LocationAutocomplete
+                    onSelect={({ location, coordinates }) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        location,
+                        coordinates,
+                      }))
+                    }
+                  />
+                  {formData.location && (
+                    <p className="text-sm text-white/50 px-3 pt-1">
+                      Selected: {formData.location} <br />
+                      Lat: {formData.coordinates.lat}, Lng: {formData.coordinates.lng}
+                    </p>
+                  )}
+                </fieldset>
+
+
                 <fieldset className="w-full border border-white/30 rounded-2xl py-1 relative ">
                   <legend className="mx-3 text-white/60 text-[15px]">
-                    Visited Locations
+                    Visited Places
                   </legend>
                   {formData.visitedLocations.length > 0 && (
                     <div className="h-[4vh] flex items-center flex-wrap overflow-scroll">
