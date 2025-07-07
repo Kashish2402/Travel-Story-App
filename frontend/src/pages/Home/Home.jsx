@@ -44,7 +44,8 @@ function Home() {
               username={story.user.username}
               profilePic={story.user.profilePic}
               likes={story.likesCount}
-              visitedLocations={story.visitedLocations || []}
+              visitedLocations={story.visitedPlaces || []}
+              vlocation={story.location}
               visitedDate={story.visitedDate}
               updatedAt={story.updatedAt}
               image={story.imageUrl ? story.imageUrl : "./OIP.jpeg"}

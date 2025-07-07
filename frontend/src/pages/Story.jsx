@@ -120,6 +120,9 @@ function Story() {
                   <h1 className="text-white">
                     {storyDetails[0]?.user?.username}
                   </h1>
+                  <h1 className="text-white">
+                    {storyDetails[0]?.location}
+                  </h1>
                 </div>
               </div>
               {authUser.username===storyDetails[0]?.user?.username && <button

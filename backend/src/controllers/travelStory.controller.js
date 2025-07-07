@@ -6,11 +6,11 @@ import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import mongoose from "mongoose";
 
 const addStory = asyncHandler(async (req, res, next) => {
-  const { title, description, location, coordinates,visitedLocations, visitedDate } = req.body;
+  const { title, description, location, coordinates,visitedPlaces, visitedDate } = req.body;
 
   const imageUrl = req.file?.path;
 
-  if (!title || !description || !visitedLocations || !imageUrl || !visitedDate ||!coordinates || !location)
+  if (!title || !description || !visitedPlaces || !imageUrl || !visitedDate ||!coordinates || !location)
     return next(new ApiError(400, "Fields Required"));
 
   const newVisitedDate = new Date(visitedDate);
@@ -25,19 +25,19 @@ const addStory = asyncHandler(async (req, res, next) => {
       )
     );
 
-  let parsedVisitedLocations;
-  if (typeof visitedLocations === "string") {
+  let parsedvisitedPlaces;
+  if (typeof visitedPlaces === "string") {
     try {
-      parsedVisitedLocations = JSON.parse(visitedLocations);
+      parsedvisitedPlaces = JSON.parse(visitedPlaces);
     } catch (error) {
-      return next(new ApiError(400, "Invalid visitedLocations JSON format."));
+      return next(new ApiError(400, "Invalid visitedPlaces JSON format."));
     }
   } else {
-    parsedVisitedLocations = visitedLocations;
+    parsedvisitedPlaces = visitedPlaces;
   }
 
-  if (!Array.isArray(parsedVisitedLocations)) {
-    return next(new ApiError(400, "visitedLocations must be an array."));
+  if (!Array.isArray(parsedvisitedPlaces)) {
+    return next(new ApiError(400, "visitedPlaces must be an array."));
   }
 
   const travelStory = await Story.create({
@@ -45,7 +45,7 @@ const addStory = asyncHandler(async (req, res, next) => {
     description,
     location,
     coordinates,
-    visitedLocations: parsedVisitedLocations,
+    visitedPlaces: parsedvisitedPlaces,
     visitedDate: newVisitedDate,
     imageUrl: image.url,
     userId: req.user?._id,
@@ -100,7 +100,8 @@ const getAllStories = asyncHandler(async (req, res, next) => {
         title: 1,
         description: 1,
         visitedDate: 1,
-        visitedLocations: 1,
+        visitedPlaces: 1,
+        locatio:1,
         imageUrl: 1,
         createdAt: 1,
         updatedAt: 1,
@@ -190,7 +191,7 @@ const getUserStories = asyncHandler(async (req, res, next) => {
 
 const editStory = asyncHandler(async (req, res, next) => {
   const { postId } = req.params;
-  const { title, description,location,coordinates, visitedLocations, visitedDate } = req.body;
+  const { title, description,location,coordinates, visitedPlaces, visitedDate } = req.body;
 
   let updateFields = {};
 
@@ -208,14 +209,14 @@ const editStory = asyncHandler(async (req, res, next) => {
       ))
    }
   }
-  if (visitedLocations) {
+  if (visitedPlaces) {
     try {
-      updateFields.visitedLocations = JSON.parse(visitedLocations);
+      updateFields.visitedPlaces = JSON.parse(visitedPlaces);
     } catch (error) {
       return next(
         new ApiError(
           400,
-          "Invalid visitedLocations format. Must be a valid JSON array."
+          "Invalid visitedPlaces format. Must be a valid JSON array."
         )
       );
     }
@@ -293,7 +294,7 @@ const searchStory = asyncHandler(async (req, res, next) => {
 
   if (!query) return next(new ApiError(400, "Query is required"));
 
-  const searchFields = ["title", "description", "visitedLocations"];
+  const searchFields = ["title", "description", "visitedPlaces"];
 
   const searchConditions = searchFields.map((field) => ({
     [field]: { $regex: query, $options: "i" },
@@ -301,7 +302,7 @@ const searchStory = asyncHandler(async (req, res, next) => {
 
   const searchResult = await Story.find(
     { userId: req.user?._id, $or: searchConditions },
-    "title description visitedLocations createdAt isFavourite"
+    "title description visitedPlaces createdAt isFavourite"
   ).sort({ isFavourite: -1 });
 
   if (!searchResult.length)

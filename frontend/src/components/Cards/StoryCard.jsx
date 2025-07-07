@@ -6,7 +6,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { formatDate } from "../../utils/formatDate";
 import { getLikedStories, toggleLike } from "../../features/likeSlice";
 import { deleteStory } from "../../features/travelStorySlice";
-import MapPreview from "../MapPreview";
 
 function StoryCard({
   id,
@@ -17,6 +16,7 @@ function StoryCard({
   username,
   image,
   visitedLocations,
+  vlocation,
   visitedDate,
   createdAt,
   updatedAt,
@@ -25,13 +25,13 @@ function StoryCard({
   story
 }) {
 
-
+  
   const { authUser } = useSelector((state) => state.auth);
-  const { stories } = useSelector(state => state.story)
+  const {stories}=useSelector(state=>state.story)
   const navigate = useNavigate();
   const [totalLikes, setTotalLikes] = useState(likes);
   const [showMenu, setShowMenu] = useState(false);
-  const [liked, setLiked] = useState(isLiked)
+  const [liked,setLiked]=useState(isLiked)
   const menuRef = useRef(null);
   const dispatch = useDispatch();
 
@@ -51,14 +51,14 @@ function StoryCard({
   const handleLikeButon = async (id) => {
     try {
       const response = await dispatch(toggleLike(id)).unwrap();
-      setLiked(response.isLiked)
+     setLiked(response.isLiked)
       setTotalLikes(response.totalLikes);
     } catch (error) {
       console.error("Like toggle failed:", error);
     }
   };
 
-
+  
   return (
     <div
       className={` p-3 rounded-xl border-1 border-gray-500/10 flex flex-col items-center justify-between gap-4 bg-gray-700/20 drop-shadow-md relative z-20 ${className}`}
@@ -72,6 +72,7 @@ function StoryCard({
             />
           </div>
           <p className="text-lg">{username}</p>
+          <p>{vlocation}</p>
         </div>
 
         <div className="flex items-center gap-2 relative">
@@ -93,7 +94,7 @@ function StoryCard({
                 View Story
               </h1>
               {authUser.username === username && (
-                <h1 className="py-2 w-full text-center cursor-pointer hover:bg-slate-800/50 rounded-xl" onClick={() => dispatch(deleteStory(id))}>
+                <h1 className="py-2 w-full text-center cursor-pointer hover:bg-slate-800/50 rounded-xl" onClick={()=>dispatch(deleteStory(id))}>
                   Delete Story
                 </h1>
               )}
@@ -135,11 +136,6 @@ function StoryCard({
               View More &gt;&gt;
             </Link>
           </p>
-
-          {story?.coordinates?.lat && story?.coordinates?.lng && (
-            <MapPreview lat={story.coordinates.lat} lng={story.coordinates.lng} />
-          )}
-
         </div>
 
         <div className="w-full flex justify-between items-center">

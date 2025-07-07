@@ -162,7 +162,7 @@ function CreateStory() {
     newFormData.append("visitedDate", formData.visitedDate);
     newFormData.append("location", formData.location);
     newFormData.append("coordinates", JSON.stringify(formData.coordinates));
-    newFormData.append("visitedLocations", JSON.stringify(formData.visitedLocations));
+    newFormData.append("visitedPlaces", JSON.stringify(formData.visitedLocations));
     if (formData.imageUrl) newFormData.append("imageUrl", formData.imageUrl);
 
     dispatch(addStory(newFormData));
