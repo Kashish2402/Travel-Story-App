@@ -21,8 +21,8 @@ function LocationAutoComplete({ onSelect }) {
         }
     }
 
-    const handleSelect = () => {
-        const location = `${place.properties.name}, ${place.properties.city || ""}, ${place.properties.country || ""}.trim()`
+    const handleSelect = (place) => {
+        const location = `${place.properties.name}, ${place.properties.city || ""}, ${place.properties.country || ""}`.trim()
         const coordinates = {
             lat: place.geometry.coordinates[1],
             lng: place.geometry.coordinates[0]
@@ -47,6 +47,7 @@ function LocationAutoComplete({ onSelect }) {
                     {
                         suggestions.map((place, index) => (
                             <li
+                                key={index}
                                 className="px-3 py-2 hover:bg-gray-100 cursor-pointer"
                                 onClick={() => handleSelect(place)}
                             >{place.properties.name}, {place.properties.city}, {place.properties.country}</li>
