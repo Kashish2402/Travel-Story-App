@@ -7,8 +7,6 @@ import { useDispatch } from "react-redux";
 import { addStory } from "../features/travelStorySlice";
 import LocationAutocomplete from "../components/LocationAutoComplete";
 import axios from "axios";
-import MiniMap from "../components/MiniMap";
-
 
 function CreateStory() {
   const navigate = useNavigate();
@@ -78,45 +76,45 @@ function CreateStory() {
   );
 
   const handleLocationChange = async (e) => {
-    const placeName = e.target.value;
-    setLocation(placeName);
+  const placeName = e.target.value;
+  setLocation(placeName);
 
-    const lat = formData.coordinates.lat;
-    const lng = formData.coordinates.lng;
+  const lat = formData.coordinates.lat;
+  const lng = formData.coordinates.lng;
 
-    if (!placeName.trim() || !lat || !lng) return;
+  if (!placeName.trim() || !lat || !lng) return;
 
-    const cacheKey = `${placeName}_${lat}_${lng}`;
-    if (cache[cacheKey]) {
-      setSuggestedPlaces(cache[cacheKey]);
-      return;
-    }
+  const cacheKey = `${placeName}_${lat}_${lng}`;
+  if (cache[cacheKey]) {
+    setSuggestedPlaces(cache[cacheKey]);
+    return;
+  }
 
-    try {
-      const res = await axios.get("https://api.opentripmap.com/0.1/en/places/radius", {
-        params: {
-          apikey: API_KEY,
-          radius: 20000,
-          lon: lng,
-          lat: lat,
-          format: "json",
-          limit: 20,
-        },
-      });
+  try {
+    const res = await axios.get("https://api.opentripmap.com/0.1/en/places/radius", {
+      params: {
+        apikey: API_KEY,
+        radius: 20000,
+        lon: lng,
+        lat: lat,
+        format: "json",
+        limit: 20,
+      },
+    });
 
-      const matched = res.data
-        .filter((p) => p.name?.toLowerCase().includes(placeName.trim().toLowerCase()))
-        .slice(0, 6);
+    const matched = res.data
+      .filter((p) => p.name?.toLowerCase().includes(placeName.trim().toLowerCase()))
+      .slice(0, 6);
 
-      setSuggestedPlaces(matched);
-      setCache((prevCache) => ({
-        ...prevCache,
-        [cacheKey]: matched,
-      }));
-    } catch (err) {
-      console.error("Error fetching places:", err.message);
-    }
-  };
+    setSuggestedPlaces(matched);
+    setCache((prevCache) => ({
+      ...prevCache,
+      [cacheKey]: matched,
+    }));
+  } catch (err) {
+    console.error("Error fetching places:", err.message);
+  }
+};
 
 
 
@@ -182,17 +180,17 @@ function CreateStory() {
     navigate("/dashboard");
   };
   const highlightMatch = (text, query) => {
-    const index = text.toLowerCase().indexOf(query.toLowerCase());
-    if (index === -1) return text;
+  const index = text.toLowerCase().indexOf(query.toLowerCase());
+  if (index === -1) return text;
 
-    return (
-      <>
-        {text.substring(0, index)}
-        <span className="font-bold underline text-white">{text.substring(index, index + query.length)}</span>
-        {text.substring(index + query.length)}
-      </>
-    );
-  };
+  return (
+    <>
+      {text.substring(0, index)}
+      <span className="font-bold underline text-white">{text.substring(index, index + query.length)}</span>
+      {text.substring(index + query.length)}
+    </>
+  );
+};
 
 
   return (
@@ -276,19 +274,6 @@ function CreateStory() {
                     Add
                   </button>
                 </fieldset>
-                {formData.coordinates.lat && suggestedPlaces.length > 0 && (
-                  <MiniMap
-                    coordinates={formData.coordinates}
-                    places={suggestedPlaces}
-                    onPlaceClick={(placeName) => {
-                      setFormData((prev) => ({
-                        ...prev,
-                        visitedLocations: [...prev.visitedLocations, placeName],
-                      }));
-                    }}
-                  />
-
-                )}
 
                 <div className="w-full mx-3 flex flex-col mt-3">
                   <label htmlFor="file" className="text-white/60 text-[15px]">
