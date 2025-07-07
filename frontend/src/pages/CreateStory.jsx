@@ -26,7 +26,8 @@ function CreateStory() {
 
   const API_KEY = import.meta.env.VITE_OPENTRIPMAP_API_KEY;
 
-  // Fetch suggestions for visited places based on location input
+  console.log("API KEY : ",API_KEY)
+ 
   const handleLocationChange = async (e) => {
     const placeName = e.target.value;
     setLocation(placeName);
