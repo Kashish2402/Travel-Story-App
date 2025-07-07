@@ -58,7 +58,7 @@ function LocationAutoComplete({ onSelect }) {
       />
 
       {suggestions.length > 0 && (
-        <ul className="absolute ml-3 mt-2 p-3 flex flex-col bg-gray-500/80 w-[70%] md:w-[45%] rounded-xl z-99 text-white/80 divide-y divide-gray-800/70">
+        <ul className="absolute ml-3 mt-2 p-3 flex flex-col bg-gray-500/80 w-full rounded-xl z-99 text-white/80 divide-y divide-gray-800/70">
           {suggestions.map((place, index) => (
             <li
               key={index}

@@ -192,7 +192,7 @@ function CreateStory() {
                   <input type="text" value={location} onChange={handleLocationChange} placeholder="Visited Locations..." className="overflow-hidden w-full bg-transparent border-none outline-none px-3 py-2 text-white/50 relative" />
 
                   {suggestedPlaces.length > 0 && (
-                    <ul className="absolute ml-3 mt-2 p-3 flex flex-col bg-gray-500/80 w-[70%] md:w-[45%] rounded-xl z-99 text-white/80 divide-y divide-gray-800/70">
+                    <ul className="absolute ml-3 mt-2 p-3 flex flex-col bg-gray-500/80 w-full rounded-xl z-99 text-white/80 divide-y divide-gray-800/70">
                       {suggestedPlaces.map((place) => (
                         <li key={place.xid} className="px-3 py-2 cursor-pointer hover:bg-gray-700 rounded-xl" onClick={() => handleSuggestionClick(place.name)}>
                           {place.name}
