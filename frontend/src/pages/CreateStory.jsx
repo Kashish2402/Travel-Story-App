@@ -127,8 +127,6 @@ function CreateStory() {
                     required
                   ></textarea>
                 </fieldset>
-              </div>
-              <div className="w-full h-full px-3 md:w-1/2 flex flex-col justify-center items-center gap-3">
                 <fieldset className="w-full border border-white/30 rounded-2xl py-1">
                   <legend className="mx-3 text-white/60 text-[15px]">
                     Visited Date
@@ -142,6 +140,9 @@ function CreateStory() {
                     }
                   />
                 </fieldset>
+              </div>
+              <div className="w-full h-full px-3 md:w-1/2 flex flex-col justify-center items-center gap-3">
+
                 <fieldset className="w-full border border-white/30 rounded-2xl py-1">
                   <legend className="mx-3 text-white/60 text-[15px]">Main Location</legend>
                   <LocationAutocomplete
@@ -153,12 +154,18 @@ function CreateStory() {
                       }))
                     }
                   />
-                  {formData.location && (
-                    <p className="text-sm text-white/50 px-3 pt-1">
-                      Selected: {formData.location} <br />
-                      Lat: {formData.coordinates.lat}, Lng: {formData.coordinates.lng}
-                    </p>
-                  )}
+                </fieldset>
+
+                <fieldset className="w-full border border-white/30 rounded-2xl py-1">
+                  <legend className="mx-3 text-white/60 text-[15px]">Coordinates</legend>
+                  <input
+                    type="text"
+                    value={`Latitude: ${formData.coordinates.lat}, Longitude: ${formData.coordinates.lng}`}
+                    className="overflow-hidden w-full bg-transparent border-none outline-none px-3 pb-1 text-white/50"
+                    placeholder="Visited Manali..."
+                    required
+                    readOnly
+                  />
                 </fieldset>
 
 
