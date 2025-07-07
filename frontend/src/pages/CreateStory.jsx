@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
+import debounce from "lodash.debounce";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { RxCross2 } from "react-icons/rx";
@@ -6,6 +7,8 @@ import { useDispatch } from "react-redux";
 import { addStory } from "../features/travelStorySlice";
 import LocationAutocomplete from "../components/LocationAutoComplete";
 import axios from "axios";
+import MiniMap from "../components/MiniMap";
+
 
 function CreateStory() {
   const navigate = useNavigate();
@@ -25,6 +28,8 @@ function CreateStory() {
   const [location, setLocation] = useState("");
   const [suggestedPlaces, setSuggestedPlaces] = useState([]);
   const API_KEY = import.meta.env.VITE_OPENTRIPMAP_API_KEY;
+  const [cache, setCache] = useState({});
+
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -36,10 +41,7 @@ function CreateStory() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleLocationChange = async (e) => {
-    const placeName = e.target.value;
-    setLocation(placeName);
-
+  const fetchSuggestions = async (placeName) => {
     if (placeName.trim() && formData.coordinates.lat && formData.coordinates.lng) {
       try {
         const res = await axios.get("https://api.opentripmap.com/0.1/en/places/radius", {
@@ -55,7 +57,13 @@ function CreateStory() {
 
         const matched = res.data
           .filter((p) => p.name?.toLowerCase().includes(placeName.trim().toLowerCase()))
-          .slice(0, 6);
+          .slice(0, 6)
+          .map((place) => ({
+            name: place.name,
+            xid: place.xid,
+            kinds: place.kinds || "unknown",
+          }));
+
 
         setSuggestedPlaces(matched);
       } catch (err) {
@@ -63,6 +71,54 @@ function CreateStory() {
       }
     }
   };
+
+  const debouncedFetchSuggestions = useCallback(
+    debounce((value) => fetchSuggestions(value), 500),
+    [formData.coordinates]
+  );
+
+  const handleLocationChange = async (e) => {
+    const placeName = e.target.value;
+    setLocation(placeName);
+
+    const lat = formData.coordinates.lat;
+    const lng = formData.coordinates.lng;
+
+    if (!placeName.trim() || !lat || !lng) return;
+
+    const cacheKey = `${placeName}_${lat}_${lng}`;
+    if (cache[cacheKey]) {
+      setSuggestedPlaces(cache[cacheKey]);
+      return;
+    }
+
+    try {
+      const res = await axios.get("https://api.opentripmap.com/0.1/en/places/radius", {
+        params: {
+          apikey: API_KEY,
+          radius: 20000,
+          lon: lng,
+          lat: lat,
+          format: "json",
+          limit: 20,
+        },
+      });
+
+      const matched = res.data
+        .filter((p) => p.name?.toLowerCase().includes(placeName.trim().toLowerCase()))
+        .slice(0, 6);
+
+      setSuggestedPlaces(matched);
+      setCache((prevCache) => ({
+        ...prevCache,
+        [cacheKey]: matched,
+      }));
+    } catch (err) {
+      console.error("Error fetching places:", err.message);
+    }
+  };
+
+
 
   const handleSuggestionClick = (name) => {
     setFormData((prev) => ({
@@ -125,6 +181,19 @@ function CreateStory() {
 
     navigate("/dashboard");
   };
+  const highlightMatch = (text, query) => {
+    const index = text.toLowerCase().indexOf(query.toLowerCase());
+    if (index === -1) return text;
+
+    return (
+      <>
+        {text.substring(0, index)}
+        <span className="font-bold underline text-white">{text.substring(index, index + query.length)}</span>
+        {text.substring(index + query.length)}
+      </>
+    );
+  };
+
 
   return (
     <div>
@@ -192,19 +261,34 @@ function CreateStory() {
                   <input type="text" value={location} onChange={handleLocationChange} placeholder="Visited Locations..." className="overflow-hidden w-full bg-transparent border-none outline-none px-3 py-2 text-white/50 relative" />
 
                   {suggestedPlaces.length > 0 && (
-                    <ul className="absolute ml-3 mt-2 p-3 flex flex-col bg-gray-500/80 w-full rounded-xl z-99 text-white/80 divide-y divide-gray-800/70">
+                    <ul className="absolute mt-2 p-3 flex flex-col bg-gray-500/80 w-full rounded-xl z-99 text-white/80 divide-y divide-gray-800/70">
                       {suggestedPlaces.map((place) => (
                         <li key={place.xid} className="px-3 py-2 cursor-pointer hover:bg-gray-700 rounded-xl" onClick={() => handleSuggestionClick(place.name)}>
-                          {place.name}
+                          <span className="font-medium">
+                            {highlightMatch(place.name, location)}
+                          </span>
+                          <span className="text-xs text-gray-300 italic">{place.kinds}</span>
                         </li>
                       ))}
                     </ul>
                   )}
-
                   <button type="button" onClick={addLocation} className="absolute bottom-2 right-2 bg-blue-700 px-3 py-2 rounded-xl cursor-pointer text-white" disabled={!location.trim()}>
                     Add
                   </button>
                 </fieldset>
+                {formData.coordinates.lat && suggestedPlaces.length > 0 && (
+                  <MiniMap
+                    coordinates={formData.coordinates}
+                    places={suggestedPlaces}
+                    onPlaceClick={(placeName) => {
+                      setFormData((prev) => ({
+                        ...prev,
+                        visitedLocations: [...prev.visitedLocations, placeName],
+                      }));
+                    }}
+                  />
+
+                )}
 
                 <div className="w-full mx-3 flex flex-col mt-3">
                   <label htmlFor="file" className="text-white/60 text-[15px]">
