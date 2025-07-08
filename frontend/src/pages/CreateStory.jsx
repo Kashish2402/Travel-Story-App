@@ -119,16 +119,12 @@ function CreateStory() {
 
 
   const handleSuggestionClick = (name) => {
-    setFormData((prev) => ({
-      ...prev,
-      visitedLocations: [...prev.visitedLocations, name],
-    }));
-    setLocation("");
+    setLocation(name);
     setSuggestedPlaces([]);
   };
 
   const addLocation = () => {
-    if (location.trim()) {
+    if (location.trim() && !formData.visitedLocations.includes(location.trim())) {
       setFormData((prevFormData) => ({
         ...prevFormData,
         visitedLocations: [...prevFormData.visitedLocations, location.trim()],
