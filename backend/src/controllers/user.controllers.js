@@ -359,7 +359,7 @@ const googleOAuth = asyncHandler(async (req, res, next) => {
   res
     .cookie("accessToken", accessToken, options)
     .cookie("refreshToken", refreshToken, options)
-    .redirect("http://localhost:5173/dashboard");
+    .redirect("https://travel-story-app-xxsu.onrender.com/dashboard");
 });
 
 
