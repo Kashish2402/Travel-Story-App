@@ -7,7 +7,7 @@ dotenv.config()
 passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: "http://localhost:5000/api/v1/users/google/callback"
+    callbackURL: "https://travel-story-app-xxsu.onrender.comapi/v1/users/google/callback"
 },
 
     async (accessToken, refreshToken, profile, done) => {
